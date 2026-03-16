@@ -7,13 +7,21 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+
 
 @Entity
 public class Asignacion {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private int idAsignacion;
+    private Long idAsignacion;
     
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", timezone = "America/Santiago")
     private OffsetDateTime fechaAsignacion;
@@ -21,19 +29,22 @@ public class Asignacion {
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", timezone = "America/Santiago")
     private OffsetDateTime fechaDesvinculacion;
 
-    private int idDispositivo;
-    private int idEmpleado;
-    private String nombresEmpleado;
+    @ManyToOne
+    @JoinColumn(name = "idEmpleado") // Nombre de la columna en la BD
+    private Empleado empleado;
+
+    @ManyToOne
+    @JoinColumn(name="idDispositivo")
+    private Dispositivo dispositivo;
 
 
-    public Asignacion (int idDispositivo, int idEmpleado, String nombresEmpleado, OffsetDateTime fechaAsignacion, OffsetDateTime fechaDesvinculacion){
-        this.idDispositivo = idDispositivo;
-        this.idEmpleado = idEmpleado;
-        this.nombresEmpleado = nombresEmpleado;
+
+    public Asignacion (Dispositivo dispositivo, Empleado empleado, OffsetDateTime fechaAsignacion, OffsetDateTime fechaDesvinculacion){
+        this.dispositivo = dispositivo;
+        this.empleado = empleado;
         this.fechaAsignacion = fechaAsignacion;
         this.fechaDesvinculacion = fechaDesvinculacion;
     }
-    
 
 
 

@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,23 +18,16 @@ import lombok.ToString;
 @NoArgsConstructor
 
 @Entity
-public class Empleado {
+public class TipoDisp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idEmpleado;
+    private Long idTipoDisp;
 
-    private String nombresEmpleado;
-    private String apellidosEmpleado;
-
-    @Column(unique = true)
-    private String rutEmpleado;
-
-    private String emailEmpleado;
-    private String telefonoEmpleado;
-    private String nacionalidadEmpleado;
-    private String cargoEmpleado;
-
-    @OneToMany(mappedBy="empleado",cascade=CascadeType.ALL)
+    private String tipoDispositivo;
+    
+    @OneToMany(mappedBy = "tipoDispositivo", cascade = CascadeType.ALL)
     @ToString.Exclude
-    private List<Asignacion> asignaciones = new ArrayList<>();
+    private List<Dispositivo> dispositivos = new ArrayList<>();
+
+
 }
