@@ -6,12 +6,13 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.gestor.backend.model.Asignacion;
-import com.gestor.backend.model.TipoDisp;
 
-public interface AsignacionRepository extends JpaRepository<TipoDisp, Long> {
-// Busca el historial de asignaciones de un empleado
+public interface AsignacionRepository extends JpaRepository<Asignacion, Long> {
     List<Asignacion> findByEmpleadoIdEmpleado(Long idEmpleado);
     
-    // Busca si un dispositivo esta actualmente asignado
+    List<Asignacion> findByEmpleadoIdEmpleadoAndFechaDesvinculacionIsNull(Long idEmpleado);
+
     List<Asignacion> findByDispositivoIdDispositivoAndFechaDesvinculacionIsNull(Long idDispositivo);
+
+    List<Asignacion> findByDispositivoIdDispositivo(Long idDispositivo);
 }

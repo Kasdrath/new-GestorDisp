@@ -2,6 +2,7 @@ package com.gestor.backend.model;
 import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,10 +32,12 @@ public class Asignacion {
 
     @ManyToOne
     @JoinColumn(name = "idEmpleado") // Nombre de la columna en la BD
+    @JsonIgnoreProperties("asignaciones")
     private Empleado empleado;
 
     @ManyToOne
     @JoinColumn(name="idDispositivo")
+    @JsonIgnoreProperties("asignaciones")
     private Dispositivo dispositivo;
 
 
