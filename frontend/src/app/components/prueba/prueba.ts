@@ -7,6 +7,5 @@ import { Component, Input } from '@angular/core';
   styleUrl: './prueba.css',
 })
 export class Prueba {
-  @Input() numero = 0;
 }
 
