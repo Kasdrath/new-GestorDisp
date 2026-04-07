@@ -1,8 +1,53 @@
-<header>
-  <link rel="stylesheet" href="inicio.css" >
-</header>
-<body>
-  <div>
+<div class="layout-container">
+  <aside class="layout-sidebar">
+    <app-panelmenu-demo></app-panelmenu-demo>
+  </aside>
+  <main class="layout-main">
     <app-toolbar-demo></app-toolbar-demo>
-  </div>
-</body>
+    <div class="layout-content">
+      <section class="table-section">
+        <h2>Tablax</h2>
+        <p-table #dt [value]="devices" class="p-datatable-sm" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5,10,20]" [globalFilterFields]="['idDisp','numeroSerie', 'marcaDisp', 'modeloDIsp', 'fechaCompra', 'estadoDisp']">
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="idDisp">
+                ID
+                <p-sortIcon field="idDisp"></p-sortIcon>
+              </th>
+              <th pSortableColumn="numeroSerie">
+                Número de Serie
+                <p-sortIcon field="numeroSerie"></p-sortIcon>
+              </th>
+              <th pSortableColumn="marcaDisp">
+                Marca
+                <p-sortIcon field="marcaDisp"></p-sortIcon>
+              </th>
+              <th pSortableColumn="modeloDIsp">
+                Modelo
+                <p-sortIcon field="modeloDIsp"></p-sortIcon>
+              </th>
+              <th pSortableColumn="fechaCompra">
+                Fecha de Compra
+                <p-sortIcon field="fechaCompra"></p-sortIcon>
+              </th>
+              <th pSortableColumn="estadoDisp">
+                Estado
+                <p-sortIcon field="estadoDisp"></p-sortIcon>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-device>
+            <tr>
+              <td>{{ device.idDisp }}</td>
+              <td>{{ device.numeroSerie }}</td>
+              <td>{{ device.marcaDisp }}</td>
+              <td>{{ device.modeloDIsp }}</td>
+              <td>{{ device.fechaCompra }}</td>
+              <td>{{ device.estadoDisp }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </section>
+    </div>
+  </main>
+</div>
