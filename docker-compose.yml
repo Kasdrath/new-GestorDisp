@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:15
+    container_name: gestordb-postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_DB: gestordb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -28,6 +30,11 @@ import lombok.ToString;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "tipo")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = Computador.class, name = "computador"),
+    @JsonSubTypes.Type(value = Telefono.class, name = "telefono")
+})
 public class Dispositivo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
