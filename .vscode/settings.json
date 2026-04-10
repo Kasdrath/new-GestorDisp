@@ -12,5 +12,10 @@
             "database": "gestordb",
             "username": "gestor_user"
         }
-    ]
+    ],
+    "angular-schematics.schematicsDefaultOptions": {
+        "angular-*": {
+            "externalTemplate": true
+        }
+    }
 }

@@ -42,11 +42,12 @@ public class Dispositivo {
 
     @Column(unique = true)
     private String numeroSerie;
-
     private String marcaDisp;
     private String modeloDisp;
     private String tamanoPantalla;
     private LocalDate fechaCompra;
+    private Boolean estadoDisp;
+
 
     @OneToMany(mappedBy="dispositivo", cascade=CascadeType.ALL)
     @ToString.Exclude

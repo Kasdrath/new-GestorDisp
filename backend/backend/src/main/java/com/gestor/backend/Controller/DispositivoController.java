@@ -21,7 +21,7 @@ import com.gestor.backend.model.Dispositivo;
 
 @RestController
 @RequestMapping("/api/dispositivos")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:4200")
 public class DispositivoController {
 
     @Autowired

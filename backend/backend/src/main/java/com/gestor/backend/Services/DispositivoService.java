@@ -41,6 +41,8 @@ public class DispositivoService {
         dispositivoExistente.setTamanoPantalla(dispositivoEditado.getTamanoPantalla());
         dispositivoExistente.setFechaCompra(dispositivoEditado.getFechaCompra());
         dispositivoExistente.setTipoDispositivo(dispositivoEditado.getTipoDispositivo());
+        dispositivoExistente.setEstadoDisp(dispositivoEditado.getEstadoDisp());
+
 
         // 2. Actualizar campos específicos (clases hijas)
         if (dispositivoExistente instanceof Computador compExistente && dispositivoEditado instanceof Computador compEditado) {
