@@ -78,6 +78,7 @@ public class DataSeeder implements CommandLineRunner {
             pc1.setMemoriaComp("16GB RAM");
             pc1.setAlmacenamientoComp("512GB SSD");
             pc1.setTipoDispositivo(tipoComputador);
+            pc1.setEstadoDisp(true); 
             dispositivoRepo.save(pc1);
 
             // 4. Crear un Teléfono
@@ -90,6 +91,7 @@ public class DataSeeder implements CommandLineRunner {
             tel1.setNumeroTelefono("+56955555555");
             tel1.setCompaniaTelefono("Entel");
             tel1.setTipoDispositivo(tipoTelefono);
+            tel1.setEstadoDisp(true); 
             dispositivoRepo.save(tel1);
 
             // 5. Crear una Asignación Inicial (Préstamo del PC a Juan Pérez)

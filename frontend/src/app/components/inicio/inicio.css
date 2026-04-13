@@ -1,24 +1,24 @@
 .layout-container {
   display: flex;
   min-height: 100vh;
-  width: 100%;
+  width: 100vw;
   background-color: black;
   color: white;
 }
 
 .layout-sidebar {
-  width: 320px; /* Ancho fijo para tu sidebar */
   background-color: black;
   border-right: 1px solid #333333;
-  padding: 1rem;
+  width: 20%;
 }
 
 .layout-main {
-  flex: 1; /* Ocupa todo el ancho restante a la derecha */
   display: flex;
   flex-direction: column;
+  width: 80%;
 }
 
 .layout-content {
-  padding: 1rem;
+  flex: 1;
+  width: 100%;
 }

@@ -6,7 +6,7 @@ import { TableBasicDemo } from '../tabla/tabla';
 
 @Component({
   selector: 'app-inicio',
-  imports: [PanelmenuBasicDemo,ToolbarBasicDemo,TableBasicDemo],
+  imports: [PanelmenuBasicDemo,TableBasicDemo],
   templateUrl: './inicio.html',
   styleUrls: ['./inicio.css'],
 })
