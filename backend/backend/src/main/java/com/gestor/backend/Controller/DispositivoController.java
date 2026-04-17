@@ -48,7 +48,6 @@ public class DispositivoController {
             Dispositivo nuevoDispositivo = dispositivoService.crearNuevoDispositivo(dispositivo);
             return new ResponseEntity<>(nuevoDispositivo, HttpStatus.CREATED);
         } catch (RuntimeException e) {
-            // Captura el error si el número de serie ya existe
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -59,7 +58,6 @@ public class DispositivoController {
             Dispositivo dispositivoActualizado = dispositivoService.modificarDispositivo(id, dispositivoEditado);
             return ResponseEntity.ok(dispositivoActualizado);
         } catch (RuntimeException e) {
-            // Captura el error si no existe o si el número de serie choca con otro
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

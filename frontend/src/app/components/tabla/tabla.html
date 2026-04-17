@@ -4,11 +4,12 @@
         #dt2
         [value]="dispositivos"
         dataKey="idDispositivo"
+        [columns]="columnas"
         [rows]="10"
         [rowsPerPageOptions]="[10, 25, 50]"
         [loading]="loading"
         [paginator]="true"
-        [globalFilterFields]="['numeroSerie', 'marcaDisp', 'modeloDisp']"
+        [globalFilterFields]="camposFiltroGlobal"
         [tableStyle]="{ 'min-width': '50rem' }"
     >
         <ng-template #caption>
@@ -21,54 +22,36 @@
                 </p-iconfield>
             </div>
         </ng-template>
-        <ng-template #header>
+        <ng-template #header let-columns>
             <tr>
-                <th>ID</th>
-                <th>Número de Serie</th>
-                <th>Marca</th>
-                <th>Modelo</th>
-                <th>Tamaño de Pantalla</th>
-                <th>Fecha de Compra</th>
-                <th>Estado</th>
+                @for (col of columns; track col.field) {
+                    <th>{{ col.header }}</th>
+                }
             </tr>
             <tr>
-                <th>
-                    <p-columnFilter type="numeric" field="idDispositivo" placeholder="Buscar ID" ariaLabel="Filtro ID"></p-columnFilter>
-                </th>
-                <th>
-                    <p-columnFilter type="text" field="numeroSerie" placeholder="Buscar N/S" ariaLabel="Filtro N/S"></p-columnFilter>
-                </th>
-                <th>
-                    <p-columnFilter type="text" field="marcaDisp" placeholder="Buscar Marca" ariaLabel="Filtro Marca"></p-columnFilter>
-                </th>
-                <th>
-                    <p-columnFilter type="text" field="modeloDisp" placeholder="Buscar Modelo" ariaLabel="Filtro Modelo"></p-columnFilter>
-                </th>
-                <th>
-                    <p-columnFilter type="text" field="tamanoPantalla" placeholder="Buscar Tamaño" ariaLabel="Filtro Tamaño"></p-columnFilter>
-                </th>
-                <th>
-                    <p-columnFilter type="date" field="fechaCompra" placeholder="Buscar Fecha" ariaLabel="Filtro Fecha"></p-columnFilter>
-                </th>
-                <th>
-                    <p-columnFilter type="boolean" field="estadoDisp"></p-columnFilter>
-                </th>
+                @for (col of columns; track col.field) {
+                    <th>
+                        <p-columnFilter [type]="col.type || 'text'" [field]="col.field" [placeholder]="'Buscar ' + col.header" [ariaLabel]="'Filtro ' + col.header"></p-columnFilter>
+                    </th>
+                }
             </tr>
         </ng-template>
-        <ng-template #body let-dispositivo>
+        <ng-template #body let-dispositivo let-columns="columns">
             <tr>
-                <td>{{ dispositivo.idDispositivo }}</td>
-                <td>{{ dispositivo.numeroSerie }}</td>
-                <td>{{ dispositivo.marcaDisp }}</td>
-                <td>{{ dispositivo.modeloDisp }}</td>
-                <td>{{ dispositivo.tamanoPantalla }}</td>
-                <td>{{ dispositivo.fechaCompra | date:'shortDate' }}</td>
-                <td>
-                    <p-tag 
-                        [value]="dispositivo.estadoDisp ? 'Activo' : 'Inactivo'" 
-                        [severity]="getSeverity(dispositivo.estadoDisp)">
-                    </p-tag>
-                </td>
+                @for (col of columns; track col.field) {
+                    <td>
+                        @if (col.type === 'date') {
+                            {{ dispositivo[col.field] | date:'shortDate' }}
+                        } @else if (col.type === 'boolean') {
+                            <p-tag 
+                                [value]="dispositivo[col.field] ? 'Activo' : 'Inactivo'" 
+                                [severity]="getSeverity(dispositivo[col.field])">
+                            </p-tag>
+                        } @else {
+                            {{ dispositivo[col.field] }}
+                        }
+                    </td>
+                }
             </tr>
         </ng-template>
         <ng-template #emptymessage>

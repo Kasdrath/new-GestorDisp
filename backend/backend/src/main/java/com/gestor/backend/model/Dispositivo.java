@@ -56,7 +56,7 @@ public class Dispositivo {
     private List<Asignacion> asignaciones = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "idTipoDisp") // Nombre de la columna en la BD
+    @JoinColumn(name = "idTipoDisp")
     @JsonIgnoreProperties("dispositivos")
     private TipoDisp tipoDispositivo;
 }

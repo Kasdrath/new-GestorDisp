@@ -1,5 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -9,6 +8,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { Table, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { InputTextModule } from 'primeng/inputtext';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
     templateUrl: './tabla.html',
@@ -27,29 +27,16 @@ import { InputTextModule } from 'primeng/inputtext';
     ]
 })
 export class TableBasicDemo implements OnInit {
-    dispositivos: any[] = [];
-    datosCargados: boolean = false;
-
+    @Input() dispositivos: any[] = [];
+    @Input() columnas: any[] = [];
+    @Input() camposFiltroGlobal: string[] = ['numeroSerie', 'marcaDisp', 'modeloDisp'];
     loading: boolean = true;
 
-    private http = inject(HttpClient);
-    private cdr = inject(ChangeDetectorRef);
-
     ngOnInit() {
-        this.http.get<any[]>('http://localhost:8080/api/dispositivos').subscribe({
-            next: (data) => {
-                console.log('Datos recibidos del backend:', data);
-                this.dispositivos = [...data];
-                this.datosCargados = true;
-                this.loading = false;
-                this.cdr.detectChanges();
-            },
-            error: (error) => {
-                console.error('Error al obtener los datos del backend:', error);
-                this.loading = false;
-            }
-        });
+        this.loading = false;
     }
+
+
 
     clear(table: Table) {
         table.clear();

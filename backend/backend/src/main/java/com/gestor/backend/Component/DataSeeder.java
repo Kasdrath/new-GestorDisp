@@ -34,9 +34,7 @@ public class DataSeeder implements CommandLineRunner {
     private TipoDispRepository tipoDispRepo;
 
     @Override
-    public void run(String... args) throws Exception {
-        // Verificamos si la base de datos ya tiene datos para no duplicarlos al reiniciar
-        if (empleadoRepo.count() == 0) {
+    public void run(String... args) throws Exception {        if (empleadoRepo.count() == 0) {
             System.out.println("⏳ Poblando la base de datos de PostgreSQL con datos iniciales...");
 
             // 1. Crear Empleados
@@ -94,7 +92,6 @@ public class DataSeeder implements CommandLineRunner {
             tel1.setEstadoDisp(true); 
             dispositivoRepo.save(tel1);
 
-            // 5. Crear una Asignación Inicial (Préstamo del PC a Juan Pérez)
             Asignacion asignacion1 = new Asignacion(
                 pc1, 
                 emp1, 

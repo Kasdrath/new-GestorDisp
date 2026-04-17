@@ -31,7 +31,7 @@ public class Asignacion {
     private OffsetDateTime fechaDesvinculacion;
 
     @ManyToOne
-    @JoinColumn(name = "idEmpleado") // Nombre de la columna en la BD
+    @JoinColumn(name = "idEmpleado")
     @JsonIgnoreProperties("asignaciones")
     private Empleado empleado;
 

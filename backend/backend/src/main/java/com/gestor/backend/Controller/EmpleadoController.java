@@ -48,7 +48,6 @@ public class EmpleadoController {
             Empleado nuevoEmpleado = empleadoService.crearNuevoEmpleado(empleado);
             return new ResponseEntity<>(nuevoEmpleado, HttpStatus.CREATED);
         } catch (RuntimeException e) {
-            // Devuelve un error 400 Bad Request si el RUT ya está registrado
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -59,7 +58,6 @@ public class EmpleadoController {
             Empleado empleadoActualizado = empleadoService.modificarNuevoEmpleado(id, empleadoEditado);
             return ResponseEntity.ok(empleadoActualizado);
         } catch (RuntimeException e) {
-            // Devuelve un error 400 Bad Request si el empleado no existe o el RUT ya pertenece a otro
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -68,7 +66,7 @@ public class EmpleadoController {
     public ResponseEntity<?> eliminarEmpleado(@PathVariable Long id) {
         try {
             empleadoService.eliminarEmpleado(id);
-            return ResponseEntity.noContent().build(); // Devuelve 204 No Content si se elimina con éxito
+            return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
