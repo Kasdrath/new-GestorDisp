@@ -11,15 +11,17 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './inicio.html',
   styleUrls: ['./inicio.css'],
 })
-export class Inicio{
+export class Inicio {
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
   dispositivos: any[] = [];
+  empleados: any[] = [];
   mostrarTablaComp = false;
   datos: any[] = [];
   columnas: any[] = [];
   camposFiltroGlobal: any[] = [];
   loading: boolean = true;
+
 
   private columnasBase = [
     { field: 'idDispositivo', header: 'ID', type: 'numeric' },
@@ -30,22 +32,36 @@ export class Inicio{
     { field: 'estadoDisp', header: 'Estado', type: 'boolean' }
   ];
   ngOnInit() {
-        this.http.get<any[]>('http://localhost:8080/api/dispositivos').subscribe({
-            next: (data) => {
-                console.log('Datos recibidos del backend:', data);
-                this.dispositivos = [...data];
-                this.datos = [...data];
-                this.loading = false;
-                this.cdr.detectChanges();
-            },
-            error: (error) => {
-                console.error('Error al obtener los datos del backend:', error);
-                this.loading = false;
-              }
-          });
-        }
+    this.http.get<any[]>('http://localhost:8080/api/dispositivos').subscribe({
+      next: (data) => {
+        console.log('Datos recibidos del backend:', data);
+        this.dispositivos = [...data];
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al obtener los datos del backend:', error);
+        this.loading = false;
+      }
+    });
+    this.http.get<any[]>('http://localhost:8080/api/empleados').subscribe({
+      next: (data) => {
+        this.empleados = [...data];
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al obtener los datos del backend: empleados', error);
+        this.loading = false;
+      }
+    });
+  }
   cargarTablaDispositivos(deviceType: string) {
     switch (deviceType) {
+      case 'Devices':
+        this.columnas = [...this.columnasBase];
+        this.datos = [...this.dispositivos];
+        break;
       case 'Desktop':
         this.columnas = [
           ...this.columnasBase,
@@ -62,6 +78,20 @@ export class Inicio{
           { field: 'numeroTelefono', header: 'Número', type: 'text' }
         ];
         this.datos = this.dispositivos.filter(d => d.tipoDispositivo?.idTipoDisp == 2);
+        break;
+      case 'Empleados':
+        this.columnas = [
+          { field: 'idEmpleado', header: 'ID', type: 'numeric' },
+          { field: 'nombresEmpleado', header: 'Nombre', type: 'text' },
+          { field: 'apellidosEmpleado', header: 'Apellido', type: 'text' },
+          { field: 'rutEmpleado', header: 'Rut', type: 'text' },
+          { field: 'emailEmpleado', header: 'Email', type: 'text' },
+          { field: 'telefonoEmpleado', header: 'Teléfono', type: 'text' },
+          { field: 'nacionalidadEmpleado', header: 'Nacionalidad', type: 'text' },
+          { field: 'cargoEmpleado', header: 'Cargo', type: 'text' }
+        ];
+
+        this.datos = this.empleados;
         break;
       default:
         this.columnas = [...this.columnasBase];

@@ -34,7 +34,8 @@ public class DataSeeder implements CommandLineRunner {
     private TipoDispRepository tipoDispRepo;
 
     @Override
-    public void run(String... args) throws Exception {        if (empleadoRepo.count() == 0) {
+    public void run(String... args) throws Exception {
+        if (empleadoRepo.count() == 0) {
             System.out.println("⏳ Poblando la base de datos de PostgreSQL con datos iniciales...");
 
             // 1. Crear Empleados
@@ -44,6 +45,7 @@ public class DataSeeder implements CommandLineRunner {
             emp1.setApellidosEmpleado("Pérez");
             emp1.setEmailEmpleado("juan.perez@empresa.cl");
             emp1.setTelefonoEmpleado("+56912345678");
+            emp1.setNacionalidadEmpleado("Chilena");
             emp1.setCargoEmpleado("Desarrollador");
             empleadoRepo.save(emp1);
 
@@ -53,6 +55,7 @@ public class DataSeeder implements CommandLineRunner {
             emp2.setApellidosEmpleado("Gómez");
             emp2.setEmailEmpleado("ana.gomez@empresa.cl");
             emp2.setTelefonoEmpleado("+56987654321");
+            emp2.setNacionalidadEmpleado("Argentina");
             emp2.setCargoEmpleado("Diseñadora UI/UX");
             empleadoRepo.save(emp2);
 
@@ -76,7 +79,7 @@ public class DataSeeder implements CommandLineRunner {
             pc1.setMemoriaComp("16GB RAM");
             pc1.setAlmacenamientoComp("512GB SSD");
             pc1.setTipoDispositivo(tipoComputador);
-            pc1.setEstadoDisp(true); 
+            pc1.setEstadoDisp(true);
             dispositivoRepo.save(pc1);
 
             // 4. Crear un Teléfono
@@ -89,15 +92,14 @@ public class DataSeeder implements CommandLineRunner {
             tel1.setNumeroTelefono("+56955555555");
             tel1.setCompaniaTelefono("Entel");
             tel1.setTipoDispositivo(tipoTelefono);
-            tel1.setEstadoDisp(true); 
+            tel1.setEstadoDisp(true);
             dispositivoRepo.save(tel1);
 
             Asignacion asignacion1 = new Asignacion(
-                pc1, 
-                emp1, 
-                OffsetDateTime.now(ZoneId.of("America/Santiago")), 
-                null
-            );
+                    pc1,
+                    emp1,
+                    OffsetDateTime.now(ZoneId.of("America/Santiago")),
+                    null);
             asignacionRepo.save(asignacion1);
 
             System.out.println("✅ Base de datos poblada exitosamente!");

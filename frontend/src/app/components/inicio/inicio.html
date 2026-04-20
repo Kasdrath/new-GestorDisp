@@ -1,12 +1,10 @@
 <div class="layout-container">
   <aside class="layout-sidebar">
-    <app-panelmenu-demo 
-    (onDeviceSelect)="cargarTablaDispositivos($event)"
-    ></app-panelmenu-demo>
+    <app-panelmenu-demo (onDeviceSelect)="cargarTablaDispositivos($event)"></app-panelmenu-demo>
   </aside>
   <main class="layout-main">
     <div class="layout-content">
-          <app-table-demo [dispositivos]="datos" [columnas]="columnas" [camposFiltroGlobal]="camposFiltroGlobal"></app-table-demo>
+      <app-table-demo [datos]="datos" [columnas]="columnas" [camposFiltroGlobal]="camposFiltroGlobal"></app-table-demo>
     </div>
   </main>
 </div>

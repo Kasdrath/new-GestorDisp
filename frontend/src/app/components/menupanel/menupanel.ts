@@ -9,7 +9,7 @@ import { PanelMenuModule } from 'primeng/panelmenu';
         </div>
     `,
     standalone: true,
-    selector:'app-panelmenu-demo',
+    selector: 'app-panelmenu-demo',
     imports: [PanelMenuModule]
 })
 export class PanelmenuBasicDemo implements OnInit {
@@ -21,7 +21,7 @@ export class PanelmenuBasicDemo implements OnInit {
             {
                 label: 'Devices',
                 icon: 'pi pi-desktop',
-                
+                command: () => this.onDeviceSelect.emit("Devices"),
                 items: [
                     {
                         label: 'Phone',
@@ -32,18 +32,14 @@ export class PanelmenuBasicDemo implements OnInit {
                         label: 'Desktop',
                         icon: 'pi pi-desktop',
                         command: () => this.onDeviceSelect.emit("Desktop"),
-                    },
-                    {
-                        label: 'Tablet',
-                        icon: 'pi pi-tablet',
-                        command: () => this.onDeviceSelect.emit("Tablet")
                     }
                 ]
             },
             {
                 label: 'Empleados',
                 icon: 'pi pi-user',
-            },    
+                command: () => this.onDeviceSelect.emit("Empleados")
+            },
         ];
     }
 }

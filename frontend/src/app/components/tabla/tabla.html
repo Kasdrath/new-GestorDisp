@@ -1,63 +1,69 @@
-
 <div class="card">
-    <p-table
-        #dt2
-        [value]="dispositivos"
-        dataKey="idDispositivo"
-        [columns]="columnas"
-        [rows]="10"
-        [rowsPerPageOptions]="[10, 25, 50]"
-        [loading]="loading"
-        [paginator]="true"
-        [globalFilterFields]="camposFiltroGlobal"
-        [tableStyle]="{ 'min-width': '50rem' }"
-    >
+    <p-table #dt2 [value]="datos" [columns]="columnas" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]"
+        [loading]="loading" [paginator]="true" [globalFilterFields]="camposFiltroDinamico"
+        [tableStyle]="{ 'min-width': '50rem' }">
         <ng-template #caption>
             <div class="flex">
+                <p-button label="Agregar" icon="pi pi-plus" class="mr-2" (onClick)="openNewDispositivo()" />
+                <!--
+                <p-button severity="danger" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
+                -->
                 <p-iconfield iconPosition="left" class="ml-auto">
                     <p-inputicon>
                         <i class="pi pi-search"></i>
                     </p-inputicon>
-                    <input pInputText type="text" (input)="dt2.filterGlobal($any($event.target).value, 'contains')" placeholder="Buscar por palabra clave" />
+                    <input pInputText type="text" (input)="dt2.filterGlobal($any($event.target).value, 'contains')"
+                        placeholder="Buscar por palabra clave" />
                 </p-iconfield>
             </div>
         </ng-template>
+
         <ng-template #header let-columns>
             <tr>
                 @for (col of columns; track col.field) {
-                    <th>{{ col.header }}</th>
-                }
-            </tr>
-            <tr>
-                @for (col of columns; track col.field) {
-                    <th>
-                        <p-columnFilter [type]="col.type || 'text'" [field]="col.field" [placeholder]="'Buscar ' + col.header" [ariaLabel]="'Filtro ' + col.header"></p-columnFilter>
-                    </th>
+                <th>{{ col.header }}</th>
                 }
             </tr>
         </ng-template>
-        <ng-template #body let-dispositivo let-columns="columns">
+        <ng-template #body let-rowData let-columns="columns">
             <tr>
                 @for (col of columns; track col.field) {
-                    <td>
-                        @if (col.type === 'date') {
-                            {{ dispositivo[col.field] | date:'shortDate' }}
-                        } @else if (col.type === 'boolean') {
-                            <p-tag 
-                                [value]="dispositivo[col.field] ? 'Activo' : 'Inactivo'" 
-                                [severity]="getSeverity(dispositivo[col.field])">
-                            </p-tag>
-                        } @else {
-                            {{ dispositivo[col.field] }}
-                        }
-                    </td>
+                <td>
+                    @if (col.type === 'date') {
+                    {{ rowData[col.field] | date:'shortDate' }}
+                    } @else if (col.type === 'boolean') {
+                    <p-tag [value]="rowData[col.field] ? 'Activo' : 'Inactivo'"
+                        [severity]="getSeverity(rowData[col.field])">
+                    </p-tag>
+                    } @else {
+                    {{ rowData[col.field] }}
+                    }
+                </td>
                 }
             </tr>
         </ng-template>
         <ng-template #emptymessage>
             <tr>
-                <td colspan="7">No se encontraron dispositivos.</td>
+                <td colspan="7">No se encontraron filas.</td>
             </tr>
         </ng-template>
     </p-table>
+    <p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" header="Datos de Dispositivo" [modal]="true">
+        <div class="dialog-content">
+            <div class="field">
+                <label for="name">Número de serie</label>
+                <input id="name" type="text" pInputText [(ngModel)]="dispositivo.numeroSerie" /> 
+                <label for="name">Marca</label>
+                <input id="name" type="text" pInputText [(ngModel)]="dispositivo.marca" />
+                <label for="name">Modelo</label>
+                <input id="name" type="text" pInputText [(ngModel)]="dispositivo.modelo" />
+                <label for="name">Tamaño de pantalla</label>
+                <input id="name" type="text" pInputText [(ngModel)]="dispositivo.tamanoPantalla" />
+                <label for="name">Fecha de compra</label>
+                <input id="name" type="date" pInputText [(ngModel)]="dispositivo.fechaCompra" />
+                <label for="name">Estado</label>
+            </div>
+        </div>
+    </p-dialog>
+
 </div>
