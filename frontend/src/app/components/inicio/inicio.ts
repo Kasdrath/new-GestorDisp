@@ -2,7 +2,8 @@ import { ChangeDetectorRef, Component, Input, OnInit, inject } from '@angular/co
 import { CommonModule } from '@angular/common';
 import { PanelmenuBasicDemo } from "../menupanel/menupanel";
 import { TableBasicDemo } from '../tabla/tabla';
-import { HttpClient } from '@angular/common/http';
+import { dispositivoService } from '../../services/dispositivo.service';
+import { empleadoService } from '../../services/empleado.service';
 
 
 @Component({
@@ -12,8 +13,10 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./inicio.css'],
 })
 export class Inicio {
-  private http = inject(HttpClient);
+  private dispositivoService = inject(dispositivoService);
+  private empleadoService = inject(empleadoService);
   private cdr = inject(ChangeDetectorRef);
+
   dispositivos: any[] = [];
   empleados: any[] = [];
   mostrarTablaComp = false;
@@ -32,7 +35,7 @@ export class Inicio {
     { field: 'estadoDisp', header: 'Estado', type: 'boolean' }
   ];
   ngOnInit() {
-    this.http.get<any[]>('http://localhost:8080/api/dispositivos').subscribe({
+    this.dispositivoService.obtenerTodos().subscribe({
       next: (data) => {
         console.log('Datos recibidos del backend:', data);
         this.dispositivos = [...data];
@@ -44,17 +47,20 @@ export class Inicio {
         this.loading = false;
       }
     });
-    this.http.get<any[]>('http://localhost:8080/api/empleados').subscribe({
+
+    this.empleadoService.obtenerTodos().subscribe({
       next: (data) => {
         this.empleados = [...data];
         this.loading = false;
         this.cdr.detectChanges();
+        console.log("funciona");
       },
       error: (error) => {
         console.error('Error al obtener los datos del backend: empleados', error);
         this.loading = false;
       }
     });
+    
   }
   cargarTablaDispositivos(deviceType: string) {
     switch (deviceType) {

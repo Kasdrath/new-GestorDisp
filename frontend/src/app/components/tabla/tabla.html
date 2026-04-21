@@ -12,10 +12,7 @@
   >
     <ng-template #caption>
       <div class="flex">
-        <p-button label="Agregar" icon="pi pi-plus" class="mr-2" (onClick)="openNewDispositivo()" />
-        <!--
-                <p-button severity="danger" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
-                -->
+        <p-button label="Agregar" icon="pi pi-plus" class="mr-2" (onClick)="dialogo.openNewDispositivo()" />
         <p-iconfield iconPosition="left" class="ml-auto">
           <p-inputicon>
             <i class="pi pi-search"></i>
@@ -62,42 +59,5 @@
       </tr>
     </ng-template>
   </p-table>
-  <p-dialog
-    [(visible)]="productDialog"
-    [style]="{ width: '450px' }"
-    header="Agregar Dispositivo"
-    [modal]="true"
-  >
-    <ng-template #content>
-      <div class="flex flex-col gap-6">
-        <div>
-          <label for="name" class="block font-bold mb-3">Name</label>
-          <input
-            type="text"
-            pInputText
-            id="name"
-            required
-            autofocus
-            fluid
-          />
-
-          <!--
-
-          <label for="name">Número de serie</label>
-          <input id="name" type="text" pInputText [(ngModel)]="dispositivo.numeroSerie" />
-          <label for="name">Marca</label>
-                                <input id="name" type="text" pInputText [(ngModel)]="dispositivo.marca" />
-                <label for="name">Modelo</label>
-                <input id="name" type="text" pInputText [(ngModel)]="dispositivo.modelo" />
-                <label for="name">Tamaño de pantalla</label>
-                <input id="name" type="text" pInputText [(ngModel)]="dispositivo.tamanoPantalla" />
-                <label for="name">Fecha de compra</label>
-                <input id="name" type="date" pInputText [(ngModel)]="dispositivo.fechaCompra" />
-                <label for="name">Estado</label>
-            
-            -->
-        </div>
-      </div>
-    </ng-template>
-  </p-dialog>
+  <app-dialogo-dispositivo #dialogo></app-dialogo-dispositivo>
 </div>

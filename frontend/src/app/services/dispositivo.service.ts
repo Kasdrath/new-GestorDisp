@@ -5,17 +5,13 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class DispositivoService {
+export class dispositivoService {
   private apiUrl = 'http://localhost:8080/api/dispositivos';
 
   constructor(private http: HttpClient) { }
 
   obtenerTodos(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
-  }
-
-  obtenerPorId(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
   crear(dispositivo: any): Observable<any> {
@@ -29,4 +25,11 @@ export class DispositivoService {
   eliminar(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
+
+
+  /*
+  obtenerPorId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+*/
 }

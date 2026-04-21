@@ -1,0 +1,94 @@
+<p-dialog
+  [(visible)]="visible"
+  [style]="{ width: '450px' }"
+  header="Agregar Dispositivo"
+  [modal]="true"
+>
+  <ng-template pTemplate="content">
+    <div class="flex flex-col gap-6">
+      <div>
+        <label for="numeroSerie" class="block font-bold mb-3">Número de serie</label>
+        <input
+          type="text"
+          pInputText
+          id="numeroSerie"
+          [(ngModel)]="dispositivo.numeroSerie"
+          required
+          autofocus
+          fluid
+        />
+        <small class="text-red-500" *ngIf="submitted && !dispositivo.numeroSerie"
+          >Obligatorio.</small
+        >
+      </div>
+      <div>
+        <label for="marcaDisp" class="block font-bold mb-3">Marca de Dispositivo</label>
+        <input
+          type="text"
+          pInputText
+          id="marcaDisp"
+          [(ngModel)]="dispositivo.marcaDisp"
+          required
+          fluid
+        />
+        <small class="text-red-500" *ngIf="submitted && !dispositivo.marcaDisp">Obligatorio.</small>
+      </div>
+      <div>
+        <label for="modeloDisp" class="block font-bold mb-3">Modelo de Dispositivo</label>
+        <input
+          type="text"
+          pInputText
+          id="modeloDisp"
+          [(ngModel)]="dispositivo.modeloDisp"
+          required
+          fluid
+        />
+        <small class="text-red-500" *ngIf="submitted && !dispositivo.modeloDisp"
+          >Obligatorio.</small
+        >
+      </div>
+      <div>
+        <label for="tamanoPantalla" class="block font-bold mb-3">Tamaño de pantalla</label>
+        <input
+          type="text"
+          pInputText
+          id="tamanoPantalla"
+          [(ngModel)]="dispositivo.tamanoPantalla"
+          required
+          fluid
+        />
+        <small class="text-red-500" *ngIf="submitted && !dispositivo.tamanoPantalla"
+          >Obligatorio.</small
+        >
+      </div>
+      <div>
+        <label for="fechaCompra" class="block font-bold mb-3">Fecha de Compra</label>
+        <p-datepicker
+          [(ngModel)]="dispositivo.fechaCompra"
+          [iconDisplay]="'input'"
+          [showIcon]="true"
+          inputId="fechaCompra"
+        />
+        <small class="text-red-500" *ngIf="submitted && !dispositivo.fechaCompra"
+          >Obligatorio.</small
+        >
+      </div>
+      <div>
+        <label for="estadoDisp" class="block font-bold mb-3">Estado de Dispositivo</label>
+        <p-select
+          [(ngModel)]="dispositivo.estadoDisp"
+          inputId="estadoDisp"
+          [options]="statuses"
+          optionLabel="label"
+          optionValue="label"
+          placeholder="Seleccione un estado"
+          fluid
+        />
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+    <p-button label="Save" icon="pi pi-check" (click)="saveDispositivo()" />
+  </ng-template>
+</p-dialog>
