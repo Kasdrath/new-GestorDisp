@@ -26,10 +26,4 @@ export class dispositivoService {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
 
-
-  /*
-  obtenerPorId(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
-  }
-*/
 }

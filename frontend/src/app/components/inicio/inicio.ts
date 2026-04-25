@@ -1,14 +1,14 @@
 import { ChangeDetectorRef, Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PanelmenuBasicDemo } from "../menupanel/menupanel";
+import { PanelmenuBasicDemo } from '../menupanel/menupanel';
 import { TableBasicDemo } from '../tabla/tabla';
 import { dispositivoService } from '../../services/dispositivo.service';
 import { empleadoService } from '../../services/empleado.service';
-
+import { Toolbar } from '../toolbar/toolbar';
 
 @Component({
   selector: 'app-inicio',
-  imports: [CommonModule, PanelmenuBasicDemo, TableBasicDemo],
+  imports: [CommonModule, PanelmenuBasicDemo, TableBasicDemo, Toolbar],
   templateUrl: './inicio.html',
   styleUrls: ['./inicio.css'],
 })
@@ -24,7 +24,7 @@ export class Inicio {
   columnas: any[] = [];
   camposFiltroGlobal: any[] = [];
   loading: boolean = true;
-
+  tipoVistaActual: string = 'Devices';
 
   private columnasBase = [
     { field: 'idDispositivo', header: 'ID', type: 'numeric' },
@@ -32,37 +32,47 @@ export class Inicio {
     { field: 'marcaDisp', header: 'Marca', type: 'text' },
     { field: 'modeloDisp', header: 'Modelo', type: 'text' },
     { field: 'fechaCompra', header: 'Fecha Compra', type: 'date' },
-    { field: 'estadoDisp', header: 'Estado', type: 'boolean' }
+    { field: 'estadoDisp', header: 'Estado', type: 'boolean' },
   ];
   ngOnInit() {
+    this.obtenerDispositivos();
+    this.obtenerEmpleados();
+  }
+
+  obtenerDispositivos() {
     this.dispositivoService.obtenerTodos().subscribe({
       next: (data) => {
         console.log('Datos recibidos del backend:', data);
         this.dispositivos = [...data];
         this.loading = false;
+        this.cargarTablaDispositivos(this.tipoVistaActual);
         this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error al obtener los datos del backend:', error);
         this.loading = false;
-      }
+      },
     });
+  }
 
+  obtenerEmpleados() {
     this.empleadoService.obtenerTodos().subscribe({
       next: (data) => {
         this.empleados = [...data];
         this.loading = false;
         this.cdr.detectChanges();
-        console.log("funciona");
+        console.log('funciona');
       },
       error: (error) => {
         console.error('Error al obtener los datos del backend: empleados', error);
         this.loading = false;
-      }
+      },
     });
-    
   }
+
   cargarTablaDispositivos(deviceType: string) {
+    this.tipoVistaActual = deviceType;
+
     switch (deviceType) {
       case 'Devices':
         this.columnas = [...this.columnasBase];
@@ -73,17 +83,17 @@ export class Inicio {
           ...this.columnasBase,
           { field: 'procesadorComp', header: 'Procesador', type: 'text' },
           { field: 'memoriaComp', header: 'Memoria', type: 'text' },
-          { field: 'almacenamientoComp', header: 'Almacenamiento', type: 'text' }
+          { field: 'almacenamientoComp', header: 'Almacenamiento', type: 'text' },
         ];
-        this.datos = this.dispositivos.filter(d => d.tipoDispositivo?.idTipoDisp == 1);
+        this.datos = this.dispositivos.filter((d) => d.tipoDispositivo?.idTipoDisp == 1);
         break;
       case 'Phone':
         this.columnas = [
           ...this.columnasBase,
           { field: 'companiaTelefono', header: 'Compañia', type: 'text' },
-          { field: 'numeroTelefono', header: 'Número', type: 'text' }
+          { field: 'numeroTelefono', header: 'Número', type: 'text' },
         ];
-        this.datos = this.dispositivos.filter(d => d.tipoDispositivo?.idTipoDisp == 2);
+        this.datos = this.dispositivos.filter((d) => d.tipoDispositivo?.idTipoDisp == 2);
         break;
       case 'Empleados':
         this.columnas = [
@@ -94,7 +104,7 @@ export class Inicio {
           { field: 'emailEmpleado', header: 'Email', type: 'text' },
           { field: 'telefonoEmpleado', header: 'Teléfono', type: 'text' },
           { field: 'nacionalidadEmpleado', header: 'Nacionalidad', type: 'text' },
-          { field: 'cargoEmpleado', header: 'Cargo', type: 'text' }
+          { field: 'cargoEmpleado', header: 'Cargo', type: 'text' },
         ];
 
         this.datos = this.empleados;
@@ -104,10 +114,5 @@ export class Inicio {
         this.datos = [...this.dispositivos];
         break;
     }
-  }
-
-
-  cargarTablaComputadoras(deviceType: string) {
-
   }
 }

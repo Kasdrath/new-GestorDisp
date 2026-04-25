@@ -3,11 +3,7 @@ import { MenuItem } from 'primeng/api';
 import { PanelMenuModule } from 'primeng/panelmenu';
 
 @Component({
-    template: `
-        <div class="card flex justify-center">
-            <p-panelmenu [model]="items" class="w-full md:w-80" />
-        </div>
-    `,
+    templateUrl: './menupanel.html',
     standalone: true,
     selector: 'app-panelmenu-demo',
     imports: [PanelMenuModule]

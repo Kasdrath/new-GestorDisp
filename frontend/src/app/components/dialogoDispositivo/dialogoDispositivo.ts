@@ -13,6 +13,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 
 @Component({
   selector: 'app-dialogo-dispositivo',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -29,21 +30,21 @@ import { InputNumberModule } from 'primeng/inputnumber';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DialogoDispositivo {
+  @Input() dispositivo: any = {};
   @Input() visible: boolean = false;
   @Output() visibleChange = new EventEmitter<boolean>();
-  dispositivo: any = {};
+  @Output() onSave = new EventEmitter<any>();
   submitted: boolean = false;
-  statuses!: any[];
+  statuses: any[] = [
+    { label: 'Activo', value: true },
+    { label: 'Dado de baja', value: false }
+  ];
 
   openNewDispositivo() {
     this.dispositivo = {};
     this.submitted = false;
     this.visible = true;
     this.visibleChange.emit(this.visible);
-    this.statuses = [
-      { label: 'Activo', value: true },
-      { label: 'Dado de baja', value: false }
-    ];
   }
 
   hideDialog() {
@@ -53,5 +54,25 @@ export class DialogoDispositivo {
 
   saveDispositivo() {
     this.submitted = true;
+    if (this.dispositivo.numeroSerie?.trim() && 
+        this.dispositivo.marcaDisp?.trim() && 
+        this.dispositivo.modeloDisp?.trim() && 
+        this.dispositivo.tamanoPantalla !== null &&
+        this.dispositivo.tamanoPantalla !== undefined &&
+        String(this.dispositivo.tamanoPantalla).trim() !== '' &&
+        this.dispositivo.fechaCompra &&
+        this.dispositivo.estadoDisp !== undefined) {
+        
+        if (this.dispositivo.fechaCompra instanceof Date) {
+          const d = this.dispositivo.fechaCompra;
+          const year = d.getFullYear();
+          const month = (d.getMonth() + 1).toString().padStart(2, '0');
+          const day = d.getDate().toString().padStart(2, '0');
+          this.dispositivo.fechaCompra = `${year}-${month}-${day}`;
+        }
+
+        this.onSave.emit(this.dispositivo);
+        this.hideDialog();
+    }
   }
 }

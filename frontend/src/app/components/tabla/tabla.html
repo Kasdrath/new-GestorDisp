@@ -12,7 +12,7 @@
   >
     <ng-template #caption>
       <div class="flex">
-        <p-button label="Agregar" icon="pi pi-plus" class="mr-2" (onClick)="dialogo.openNewDispositivo()" />
+        <p-button label="Agregar" icon="pi pi-plus" class="mr-2" (onClick)="abrirDialogo()" />
         <p-iconfield iconPosition="left" class="ml-auto">
           <p-inputicon>
             <i class="pi pi-search"></i>
@@ -51,6 +51,10 @@
             }
           </td>
         }
+        <td>
+          <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (onClick)="editarDispositivo(rowData)"/>
+          <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (onClick)="eliminarDispositivo(rowData)"/>
+        </td>
       </tr>
     </ng-template>
     <ng-template #emptymessage>
@@ -59,5 +63,11 @@
       </tr>
     </ng-template>
   </p-table>
-  <app-dialogo-dispositivo #dialogo></app-dialogo-dispositivo>
+  <app-dialogo-dispositivo
+    [visible]="visible"
+    [dispositivo]="dispositivoSeleccionado"
+    (visibleChange)="visibleChange($event)"
+    (onSave)="guardarDispositivo($event)"
+    
+  ></app-dialogo-dispositivo>
 </div>

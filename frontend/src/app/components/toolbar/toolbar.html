@@ -1,1 +1,40 @@
-<p>toolbar works!</p>,
+<p-toast />
+<p-toolbar class="mb-6">
+  <ng-template #start>
+    <p-button type="button" pRipple (click)="showToastSuccess()" label="Agregar" severity="success"/>
+    <p-button
+      type="button"
+      pRipple
+      (click)="showToastDelete()"
+      severity="danger"
+      label="Borrar"
+      icon="pi pi-trash"
+      outlined
+    />
+  </ng-template>
+  <ng-template #end>
+    <p-fileUpload
+      mode="basic"
+      accept="image/*"
+      [maxFileSize]="1000000"
+      label="Importar"
+      chooseLabel="Import"
+      auto
+      customUpload
+      class="mr-2 inline-block"
+      [chooseButtonProps]="{ severity: 'secondary' }"
+    />
+    <p-button
+      label="Exportar"
+      icon="pi pi-upload"
+      severity="secondary"
+    />
+
+
+  </ng-template>
+</p-toolbar>
+
+<!--
+
+-->
+

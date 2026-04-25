@@ -4,3 +4,33 @@
   padding: 0;
   font-family: Arial, sans-serif;
 }
+
+/* Fondo blanco para Tablas de PrimeNG (Global) */
+.p-datatable,
+.p-datatable .p-datatable-header,
+.p-datatable .p-datatable-thead > tr > th,
+.p-datatable .p-datatable-tbody > tr > td,
+.p-datatable-footer,
+.p-datatable-wrapper {
+  background-color: white !important;
+  color: black !important;
+}
+
+/* Fondo blanco para PanelMenu de PrimeNG (Global) */
+.p-panelmenu .p-panelmenu-panel,
+.p-panelmenu .p-panelmenu-header-content,
+.p-panelmenu .p-panelmenu-header-action,
+.p-panelmenu .p-panelmenu-content,
+.p-panelmenu .p-panelmenu-item,
+.p-panelmenu .p-panelmenu-item-content,
+.p-panelmenu .p-panelmenu-item-link {
+  background-color: white !important;
+  color: black !important;
+}
+
+/* Color negro para el texto e iconos dentro del PanelMenu */
+.p-panelmenu .p-menuitem-text,
+.p-panelmenu .p-menuitem-icon,
+.p-panelmenu .p-submenu-icon {
+  color: black !important;
+}
