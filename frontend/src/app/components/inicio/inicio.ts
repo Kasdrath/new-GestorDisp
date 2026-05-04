@@ -24,7 +24,7 @@ export class Inicio {
   columnas: any[] = [];
   camposFiltroGlobal: any[] = [];
   loading: boolean = true;
-  tipoVistaActual: string = 'Devices';
+  //tipoVistaActual: string = 'Devices';
 
   private columnasBase = [
     { field: 'idDispositivo', header: 'ID', type: 'numeric' },
@@ -45,7 +45,7 @@ export class Inicio {
         console.log('Datos recibidos del backend:', data);
         this.dispositivos = [...data];
         this.loading = false;
-        this.cargarTablaDispositivos(this.tipoVistaActual);
+        //this.cargarTablaDispositivos(this.tipoVistaActual);
         this.cdr.detectChanges();
       },
       error: (error) => {
@@ -71,7 +71,7 @@ export class Inicio {
   }
 
   cargarTablaDispositivos(deviceType: string) {
-    this.tipoVistaActual = deviceType;
+    //this.tipoVistaActual = deviceType;
 
     switch (deviceType) {
       case 'Devices':

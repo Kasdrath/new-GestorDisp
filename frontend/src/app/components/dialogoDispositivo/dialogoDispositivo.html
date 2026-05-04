@@ -77,6 +77,19 @@
         >
       </div>
       <div>
+        <label for="tipoDispositivo" class="block font-bold mb-3">Tipo de Dispositivo</label>
+        <p-select
+          [(ngModel)]="dispositivo.tipo"
+          inputId="tipoDispositivo"
+          [options]="tiposDeDispositivo"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Seleccione un tipo"
+          fluid
+          appendTo="body"
+        />
+      </div>
+      <div>
         <label for="estadoDisp" class="block font-bold mb-3">Estado de Dispositivo</label>
         <p-select
           [(ngModel)]="dispositivo.estadoDisp"

@@ -50,12 +50,11 @@ export class TableBasicDemo implements OnInit {
     return this.columnas.map((col) => col.field);
   }
 
-
   ngOnInit() {
     this.loading = false;
   }
 
-  abrirDialogo(){
+  abrirDialogo() {
     this.dispositivoSeleccionado = {};
     this.visible = true;
   }
@@ -76,11 +75,11 @@ export class TableBasicDemo implements OnInit {
     this.dispositivoSeleccionado = { ...dispositivo };
 
     if (this.dispositivoSeleccionado.fechaCompra) {
-      const [year, month, day] = String(this.dispositivoSeleccionado.fechaCompra).split('-').map(Number);
+      const [year, month, day] = String(this.dispositivoSeleccionado.fechaCompra)
+        .split('-')
+        .map(Number);
       this.dispositivoSeleccionado.fechaCompra = new Date(year, month - 1, day);
-    }
-
-    console.log(this.dispositivoSeleccionado);
+    };
     this.visible = true;
   }
 
@@ -91,24 +90,23 @@ export class TableBasicDemo implements OnInit {
   guardarDispositivo(dispositivoGuardado: any) {
     if (dispositivoGuardado.idDispositivo) {
       this.dispositivoService.actualizar(dispositivoGuardado.idDispositivo, dispositivoGuardado).subscribe({
-        next: (dispositivoActualizado: any) => {
-          const index = this.datos.findIndex((d) => d.idDispositivo === dispositivoActualizado.idDispositivo);
-          if (index !== -1) {
-            this.datos[index] = dispositivoActualizado;
-            this.datos = [...this.datos];
-            this.datosActualizados.emit();
-          }
+        next: (response) => {
+          console.log('Dispositivo actualizado:', response);
+          this.datosActualizados.emit();
         },
-        error: (err) => console.error('Error al modificar dispositivo', err)
+        error: (error) => {
+          console.error('Error al actualizar el dispositivo:', error);
+        }
       });
     } else {
       this.dispositivoService.crear(dispositivoGuardado).subscribe({
-        next: (nuevoDispositivo: any) => {
-          this.datos.unshift(nuevoDispositivo);
-          this.datos = [...this.datos]; 
+        next: (response) => {
+          console.log('Dispositivo creado:', response);
           this.datosActualizados.emit();
         },
-        error: (err) => console.error('Error al crear dispositivo', err)
+        error: (error) => {
+          console.error('Error al crear el dispositivo:', error);
+        }
       });
     }
   }

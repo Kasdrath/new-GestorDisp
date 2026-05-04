@@ -39,6 +39,10 @@ export class DialogoDispositivo {
     { label: 'Activo', value: true },
     { label: 'Dado de baja', value: false }
   ];
+  tiposDeDispositivo: any[] = [
+    { label: 'Computador', value: 'computador' },
+    { label: 'Teléfono', value: 'telefono' }
+  ];
 
   openNewDispositivo() {
     this.dispositivo = {};
@@ -61,7 +65,8 @@ export class DialogoDispositivo {
         this.dispositivo.tamanoPantalla !== undefined &&
         String(this.dispositivo.tamanoPantalla).trim() !== '' &&
         this.dispositivo.fechaCompra &&
-        this.dispositivo.estadoDisp !== undefined) {
+        this.dispositivo.estadoDisp !== undefined &&
+        this.dispositivo.tipo) {
         
         if (this.dispositivo.fechaCompra instanceof Date) {
           const d = this.dispositivo.fechaCompra;
@@ -71,7 +76,14 @@ export class DialogoDispositivo {
           this.dispositivo.fechaCompra = `${year}-${month}-${day}`;
         }
 
+        if (this.dispositivo.tipo === 'computador') {
+          this.dispositivo.tipoDispositivo = { idTipoDisp: 1 };
+        } else if (this.dispositivo.tipo === 'telefono') {
+          this.dispositivo.tipoDispositivo = { idTipoDisp: 2 };
+        }
+
         this.onSave.emit(this.dispositivo);
+        
         this.hideDialog();
     }
   }
