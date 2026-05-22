@@ -1,12 +1,17 @@
 <p-toast />
 <p-toolbar class="mb-6">
   <ng-template #start>
-    <p-button type="button" pRipple (click)="showToastSuccess()" label="Agregar" severity="success"/>
     <p-button
       type="button"
       pRipple
-      (click)="showToastDelete()"
-      severity="danger"
+      label="Agregar"
+      severity="success"
+      (onClick)="abrirDialogo()"
+    />
+
+    <p-button
+      type="button"
+      pRipple
       label="Borrar"
       icon="pi pi-trash"
       outlined
@@ -24,17 +29,16 @@
       class="mr-2 inline-block"
       [chooseButtonProps]="{ severity: 'secondary' }"
     />
-    <p-button
-      label="Exportar"
-      icon="pi pi-upload"
-      severity="secondary"
-    />
-
-
+    <p-button label="Exportar" icon="pi pi-upload" severity="secondary" />
   </ng-template>
+    <app-dialogo-dispositivo
+    [visible]="visible"
+    [dispositivo]="dataSelected"
+    (visibleChange)="visibleChange($event)"
+    (onSave)="guardarDispositivo($event)"
+  ></app-dialogo-dispositivo>
 </p-toolbar>
 
 <!--
 
 -->
-

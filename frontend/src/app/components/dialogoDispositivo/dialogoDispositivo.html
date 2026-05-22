@@ -18,9 +18,9 @@
           autofocus
           fluid
         />
-        <small class="text-red-500" *ngIf="submitted && !dispositivo.numeroSerie"
-          >Obligatorio.</small
-        >
+        @if (submitted && !dispositivo.numeroSerie) {
+          <small class="text-red-500">Obligatorio.</small>
+        }
       </div>
       <div>
         <label for="marcaDisp" class="block font-bold mb-3">Marca de Dispositivo</label>
@@ -32,7 +32,9 @@
           required
           fluid
         />
-        <small class="text-red-500" *ngIf="submitted && !dispositivo.marcaDisp">Obligatorio.</small>
+        @if (submitted && !dispositivo.marcaDisp) {
+          <small class="text-red-500">Obligatorio.</small>
+        }
       </div>
       <div>
         <label for="modeloDisp" class="block font-bold mb-3">Modelo de Dispositivo</label>
@@ -44,9 +46,9 @@
           required
           fluid
         />
-        <small class="text-red-500" *ngIf="submitted && !dispositivo.modeloDisp"
-          >Obligatorio.</small
-        >
+        @if (submitted && !dispositivo.modeloDisp) {
+          <small class="text-red-500">Obligatorio.</small>
+        }
       </div>
       <div>
         <label for="tamanoPantalla" class="block font-bold mb-3">Tamaño de pantalla</label>
@@ -58,9 +60,9 @@
           required
           fluid
         />
-        <small class="text-red-500" *ngIf="submitted && !dispositivo.tamanoPantalla"
-          >Obligatorio.</small
-        >
+        @if (submitted && !dispositivo.tamanoPantalla) {
+          <small class="text-red-500">Obligatorio.</small>
+        }
       </div>
       <div>
         <label for="fechaCompra" class="block font-bold mb-3">Fecha de Compra</label>
@@ -72,9 +74,9 @@
           appendTo="body"
           dateFormat="dd/mm/yy"
         />
-        <small class="text-red-500" *ngIf="submitted && !dispositivo.fechaCompra"
-          >Obligatorio.</small
-        >
+        @if (submitted && !dispositivo.fechaCompra) {
+          <small class="text-red-500">Obligatorio.</small>
+        }
       </div>
       <div>
         <label for="tipoDispositivo" class="block font-bold mb-3">Tipo de Dispositivo</label>
@@ -89,6 +91,46 @@
           appendTo="body"
         />
       </div>
+
+      @if (dispositivo.tipo === 'computador') {
+        <div>
+          <label for="procesadorComp" class="block font-bold mb-3">Procesador</label>
+          <input type="text" pInputText id="procesadorComp" [(ngModel)]="dispositivo.procesadorComp" required fluid />
+          @if (submitted && !dispositivo.procesadorComp) {
+            <small class="text-red-500">Obligatorio.</small>
+          }
+        </div>
+        <div>
+          <label for="memoriaComp" class="block font-bold mb-3">Memoria RAM</label>
+          <input type="text" pInputText id="memoriaComp" [(ngModel)]="dispositivo.memoriaComp" required fluid />
+          @if (submitted && !dispositivo.memoriaComp) {
+            <small class="text-red-500">Obligatorio.</small>
+          }
+        </div>
+        <div>
+          <label for="almacenamientoComp" class="block font-bold mb-3">Almacenamiento</label>
+          <input type="text" pInputText id="almacenamientoComp" [(ngModel)]="dispositivo.almacenamientoComp" required fluid />
+          @if (submitted && !dispositivo.almacenamientoComp) {
+            <small class="text-red-500">Obligatorio.</small>
+          }
+        </div>
+      } @else if (dispositivo.tipo === 'telefono') {
+        <div>
+          <label for="numeroTelefono" class="block font-bold mb-3">Número de Teléfono</label>
+          <input type="text" pInputText id="numeroTelefono" [(ngModel)]="dispositivo.numeroTelefono" required fluid />
+          @if (submitted && !dispositivo.numeroTelefono) {
+            <small class="text-red-500">Obligatorio.</small>
+          }
+        </div>
+        <div>
+          <label for="companiaTelefono" class="block font-bold mb-3">Compañía</label>
+          <input type="text" pInputText id="companiaTelefono" [(ngModel)]="dispositivo.companiaTelefono" required fluid />
+          @if (submitted && !dispositivo.companiaTelefono) {
+            <small class="text-red-500">Obligatorio.</small>
+          }
+        </div>
+      }
+
       <div>
         <label for="estadoDisp" class="block font-bold mb-3">Estado de Dispositivo</label>
         <p-select

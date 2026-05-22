@@ -1,15 +1,15 @@
 <div class="layout-container">
-  <app-toolbar></app-toolbar>
   <aside class="layout-sidebar">
     <app-panelmenu-demo (onDeviceSelect)="cargarTablaDispositivos($event)"></app-panelmenu-demo>
   </aside>
   <main class="layout-main">
     <div class="layout-content">
+      <app-toolbar (datosActualizados)="obtenerDatos()"></app-toolbar>
       <app-table-demo
         [datos]="datos"
         [columnas]="columnas"
         [camposFiltroGlobal]="camposFiltroGlobal"
-        (datosActualizados)="obtenerDispositivos()"
+        (datosActualizados)="obtenerDatos()"
       ></app-table-demo>
     </div>
   </main>

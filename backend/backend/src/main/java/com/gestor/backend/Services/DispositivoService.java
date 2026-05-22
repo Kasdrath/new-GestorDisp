@@ -1,5 +1,8 @@
 package com.gestor.backend.Services;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,8 +67,13 @@ public class DispositivoService {
         boolean tieneAsignacionesActivas = dispositivo.getAsignaciones().stream().anyMatch(a -> a.getFechaDesvinculacion() == null);
 
         if (tieneAsignacionesActivas) {
-            throw new RuntimeException("No se puede eliminar el dispositivo porque está asignado actualmente. Debe ser devuelto primero.");
+            // Desvincular automáticamente el dispositivo marcando la fecha actual
+            dispositivo.getAsignaciones().stream().filter(a -> a.getFechaDesvinculacion() == null)
+                .forEach(a -> a.setFechaDesvinculacion(OffsetDateTime.now(ZoneId.of("America/Santiago"))));
         }
-        dispositivoRepo.delete(dispositivo);
+        
+        // Borrado lógico: marcamos el dispositivo como inactivo o dado de baja para conservar el historial
+        dispositivo.setEstadoDisp(false);
+        dispositivoRepo.save(dispositivo);
     }
 }

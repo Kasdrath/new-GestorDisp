@@ -11,7 +11,9 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { Button } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { DialogoDispositivo } from '../dialogoDispositivo/dialogoDispositivo';
+import { DialogoEmpleado } from '../dialogoEmpleado/dialogoEmpleado';
 import { dispositivoService } from '../../services/dispositivo.service';
+import { empleadoService } from '../../services/empleado.service';
 
 @Component({
   templateUrl: './tabla.html',
@@ -30,6 +32,7 @@ import { dispositivoService } from '../../services/dispositivo.service';
     Button,
     DialogModule,
     DialogoDispositivo,
+    DialogoEmpleado,
   ],
 })
 export class TableBasicDemo implements OnInit {
@@ -39,9 +42,13 @@ export class TableBasicDemo implements OnInit {
   @Output() datosActualizados = new EventEmitter<void>();
   loading: boolean = true;
   visible: boolean = false;
-  dispositivoSeleccionado: any = {};
+  dataSelected: any = {};
+  visibleEmpleado: boolean = false;
 
-  constructor(private dispositivoService: dispositivoService) {}
+  constructor(
+    private dispositivoService: dispositivoService,
+    private empleadoService: empleadoService,
+  ) {}
 
   get camposFiltroDinamico(): string[] {
     if (this.camposFiltroGlobal && this.camposFiltroGlobal.length > 0) {
@@ -55,7 +62,7 @@ export class TableBasicDemo implements OnInit {
   }
 
   abrirDialogo() {
-    this.dispositivoSeleccionado = {};
+    this.dataSelected = {};
     this.visible = true;
   }
 
@@ -71,7 +78,57 @@ export class TableBasicDemo implements OnInit {
     return estado ? 'success' : 'danger';
   }
 
-  editarDispositivo(dispositivo: any) {
+  editarDatos(data: any) {
+    if ('idDispositivo' in data) {
+      // Lógica si el rowData es un dispositivo
+      this.dataSelected = { ...data };
+      if (this.dataSelected.fechaCompra) {
+        const [year, month, day] = String(this.dataSelected.fechaCompra).split('-').map(Number);
+        this.dataSelected.fechaCompra = new Date(year, month - 1, day);
+      }
+      this.visible = true;
+      console.log('Es un dispositivo');
+    } else if ('idEmpleado' in data) {
+      // Lógica si el rowData es un empleado
+      this.dataSelected = { ...data };
+      this.visibleEmpleado = true;
+      console.log('Es un empleado');
+    }
+  }
+
+  eliminarDatos(data: any) {
+    if ('idDispositivo' in data) {
+      if (
+        confirm(`¿Estás seguro de eliminar el dispositivo con número de serie ${data.numeroSerie}?`)
+      ) {
+        this.dispositivoService.eliminar(data.idDispositivo).subscribe({
+          next: () => {
+            console.log('Dispositivo eliminado correctamente');
+            this.datos = this.datos.filter((d) => d.idDispositivo !== data.idDispositivo);
+            this.datosActualizados.emit();
+          },
+          error: (error) => console.error('Error al eliminar el dispositivo:', error),
+        });
+      }
+    } else if ('idEmpleado' in data) {
+      if (
+        confirm(
+          `¿Estás seguro de eliminar al empleado ${data.nombresEmpleado} ${data.apellidosEmpleado}?`,
+        )
+      ) {
+        this.empleadoService.eliminar(data.idEmpleado).subscribe({
+          next: () => {
+            console.log('Empleado eliminado correctamente');
+            this.datos = this.datos.filter((e) => e.idEmpleado !== data.idEmpleado);
+            this.datosActualizados.emit();
+          },
+          error: (error) => console.error('Error al eliminar el empleado:', error),
+        });
+      }
+    }
+  }
+
+  /* editarDispositivo(dispositivo: any) {
     this.dispositivoSeleccionado = { ...dispositivo };
 
     if (this.dispositivoSeleccionado.fechaCompra) {
@@ -79,25 +136,42 @@ export class TableBasicDemo implements OnInit {
         .split('-')
         .map(Number);
       this.dispositivoSeleccionado.fechaCompra = new Date(year, month - 1, day);
-    };
+    }
     this.visible = true;
-  }
+  }*/
 
   eliminarDispositivo(dispositivo: any) {
-    // Lógica para confirmar y eliminar usando dispositivo.idDispositivo
+    if (
+      confirm(
+        `¿Estás seguro de eliminar el dispositivo con número de serie ${dispositivo.numeroSerie}?`,
+      )
+    ) {
+      this.dispositivoService.eliminar(dispositivo.idDispositivo).subscribe({
+        next: () => {
+          console.log('Dispositivo eliminado correctamente');
+          this.datos = this.datos.filter((d) => d.idDispositivo !== dispositivo.idDispositivo);
+          this.datosActualizados.emit();
+        },
+        error: (error) => {
+          console.error('Error al eliminar el dispositivo:', error);
+        },
+      });
+    }
   }
 
   guardarDispositivo(dispositivoGuardado: any) {
     if (dispositivoGuardado.idDispositivo) {
-      this.dispositivoService.actualizar(dispositivoGuardado.idDispositivo, dispositivoGuardado).subscribe({
-        next: (response) => {
-          console.log('Dispositivo actualizado:', response);
-          this.datosActualizados.emit();
-        },
-        error: (error) => {
-          console.error('Error al actualizar el dispositivo:', error);
-        }
-      });
+      this.dispositivoService
+        .actualizar(dispositivoGuardado.idDispositivo, dispositivoGuardado)
+        .subscribe({
+          next: (response) => {
+            console.log('Dispositivo actualizado:', response);
+            this.datosActualizados.emit();
+          },
+          error: (error) => {
+            console.error('Error al actualizar el dispositivo:', error);
+          },
+        });
     } else {
       this.dispositivoService.crear(dispositivoGuardado).subscribe({
         next: (response) => {
@@ -106,7 +180,7 @@ export class TableBasicDemo implements OnInit {
         },
         error: (error) => {
           console.error('Error al crear el dispositivo:', error);
-        }
+        },
       });
     }
   }
