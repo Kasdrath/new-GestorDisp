@@ -34,6 +34,7 @@ public class EmpleadoService {
         empleadoExistente.setRutEmpleado(empleadoEditado.getRutEmpleado());
         empleadoExistente.setEmailEmpleado(empleadoEditado.getEmailEmpleado());
         empleadoExistente.setTelefonoEmpleado(empleadoEditado.getTelefonoEmpleado());
+        empleadoExistente.setNacionalidadEmpleado(empleadoEditado.getNacionalidadEmpleado());
         empleadoExistente.setCargoEmpleado(empleadoEditado.getCargoEmpleado());
 
         return empleadoRepo.save(empleadoExistente);

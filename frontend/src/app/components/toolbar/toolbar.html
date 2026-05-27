@@ -37,6 +37,12 @@
     (visibleChange)="visibleChange($event)"
     (onSave)="guardarDispositivo($event)"
   ></app-dialogo-dispositivo>
+  <app-dialogo-empleado
+    [visible]="visibleEmpleado"
+    [empleado]="dataSelected"
+    (visibleChange)="visibleEmpleadoChange($event)"
+    (onSave)="guardarEmpleado($event)"
+  ></app-dialogo-empleado>
 </p-toolbar>
 
 <!--

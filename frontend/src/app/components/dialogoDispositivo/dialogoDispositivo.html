@@ -95,21 +95,42 @@
       @if (dispositivo.tipo === 'computador') {
         <div>
           <label for="procesadorComp" class="block font-bold mb-3">Procesador</label>
-          <input type="text" pInputText id="procesadorComp" [(ngModel)]="dispositivo.procesadorComp" required fluid />
+          <input
+            type="text"
+            pInputText
+            id="procesadorComp"
+            [(ngModel)]="dispositivo.procesadorComp"
+            required
+            fluid
+          />
           @if (submitted && !dispositivo.procesadorComp) {
             <small class="text-red-500">Obligatorio.</small>
           }
         </div>
         <div>
           <label for="memoriaComp" class="block font-bold mb-3">Memoria RAM</label>
-          <input type="text" pInputText id="memoriaComp" [(ngModel)]="dispositivo.memoriaComp" required fluid />
+          <input
+            type="text"
+            pInputText
+            id="memoriaComp"
+            [(ngModel)]="dispositivo.memoriaComp"
+            required
+            fluid
+          />
           @if (submitted && !dispositivo.memoriaComp) {
             <small class="text-red-500">Obligatorio.</small>
           }
         </div>
         <div>
           <label for="almacenamientoComp" class="block font-bold mb-3">Almacenamiento</label>
-          <input type="text" pInputText id="almacenamientoComp" [(ngModel)]="dispositivo.almacenamientoComp" required fluid />
+          <input
+            type="text"
+            pInputText
+            id="almacenamientoComp"
+            [(ngModel)]="dispositivo.almacenamientoComp"
+            required
+            fluid
+          />
           @if (submitted && !dispositivo.almacenamientoComp) {
             <small class="text-red-500">Obligatorio.</small>
           }
@@ -117,14 +138,28 @@
       } @else if (dispositivo.tipo === 'telefono') {
         <div>
           <label for="numeroTelefono" class="block font-bold mb-3">Número de Teléfono</label>
-          <input type="text" pInputText id="numeroTelefono" [(ngModel)]="dispositivo.numeroTelefono" required fluid />
+          <input
+            type="text"
+            pInputText
+            id="numeroTelefono"
+            [(ngModel)]="dispositivo.numeroTelefono"
+            required
+            fluid
+          />
           @if (submitted && !dispositivo.numeroTelefono) {
             <small class="text-red-500">Obligatorio.</small>
           }
         </div>
         <div>
           <label for="companiaTelefono" class="block font-bold mb-3">Compañía</label>
-          <input type="text" pInputText id="companiaTelefono" [(ngModel)]="dispositivo.companiaTelefono" required fluid />
+          <input
+            type="text"
+            pInputText
+            id="companiaTelefono"
+            [(ngModel)]="dispositivo.companiaTelefono"
+            required
+            fluid
+          />
           @if (submitted && !dispositivo.companiaTelefono) {
             <small class="text-red-500">Obligatorio.</small>
           }

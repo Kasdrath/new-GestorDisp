@@ -53,8 +53,8 @@ export class DialogoEmpleado {
       this.empleado.rutEmpleado?.trim() &&
       this.empleado.emailEmpleado?.trim() &&
       this.empleado.telefonoEmpleado?.trim() &&
-      this.empleado.nacionalidadEmpleado.trim() &&
-      this.empleado.cargoEmpleado.trim()
+      this.empleado.nacionalidadEmpleado?.trim() &&
+      this.empleado.cargoEmpleado?.trim()
     );
     if (isValid) {
       this.onSave.emit(this.empleado);

@@ -14,6 +14,7 @@ import { DialogoDispositivo } from '../dialogoDispositivo/dialogoDispositivo';
 import { DialogoEmpleado } from '../dialogoEmpleado/dialogoEmpleado';
 import { dispositivoService } from '../../services/dispositivo.service';
 import { empleadoService } from '../../services/empleado.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   templateUrl: './tabla.html',
@@ -48,6 +49,7 @@ export class TableBasicDemo implements OnInit {
   constructor(
     private dispositivoService: dispositivoService,
     private empleadoService: empleadoService,
+    private messageService: MessageService
   ) {}
 
   get camposFiltroDinamico(): string[] {
@@ -70,6 +72,10 @@ export class TableBasicDemo implements OnInit {
     this.visible = event;
   }
 
+  visibleEmpleadoChange(event: boolean) {
+    this.visibleEmpleado = event;
+  }
+
   clear(table: Table) {
     table.clear();
   }
@@ -80,7 +86,6 @@ export class TableBasicDemo implements OnInit {
 
   editarDatos(data: any) {
     if ('idDispositivo' in data) {
-      // Lógica si el rowData es un dispositivo
       this.dataSelected = { ...data };
       if (this.dataSelected.fechaCompra) {
         const [year, month, day] = String(this.dataSelected.fechaCompra).split('-').map(Number);
@@ -89,7 +94,6 @@ export class TableBasicDemo implements OnInit {
       this.visible = true;
       console.log('Es un dispositivo');
     } else if ('idEmpleado' in data) {
-      // Lógica si el rowData es un empleado
       this.dataSelected = { ...data };
       this.visibleEmpleado = true;
       console.log('Es un empleado');
@@ -166,20 +170,39 @@ export class TableBasicDemo implements OnInit {
         .subscribe({
           next: (response) => {
             console.log('Dispositivo actualizado:', response);
+            this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Dispositivo actualizado correctamente', life: 3000 });
             this.datosActualizados.emit();
           },
           error: (error) => {
             console.error('Error al actualizar el dispositivo:', error);
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Hubo un error al actualizar el dispositivo' });
           },
         });
     } else {
       this.dispositivoService.crear(dispositivoGuardado).subscribe({
         next: (response) => {
           console.log('Dispositivo creado:', response);
+          this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Dispositivo agregado correctamente', life: 3000 });
           this.datosActualizados.emit();
         },
         error: (error) => {
           console.error('Error al crear el dispositivo:', error);
+        },
+      });
+    }
+  }
+
+  guardarEmpleado(empleadoGuardado: any) {
+    if (empleadoGuardado.idEmpleado) {
+      this.empleadoService.actualizar(empleadoGuardado.idEmpleado, empleadoGuardado).subscribe({
+        next: (response) => {
+          console.log('Empleado actualizado:', response);
+          this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Empleado actualizado correctamente', life: 3000 });
+          this.datosActualizados.emit();
+        },
+        error: (error) => {
+          console.error('Error al actualizar el empleado:', error);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Hubo un error al actualizar el empleado. Verifica que el RUT no esté duplicado.' });
         },
       });
     }

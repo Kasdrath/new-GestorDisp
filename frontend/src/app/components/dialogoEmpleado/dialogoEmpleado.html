@@ -1,1 +1,129 @@
-<p>dialogoEmpleado works!</p>,
+<p-dialog
+  [(visible)]="visible"
+  [style]="{ width: '450px' }"
+  [header]="empleado.idEmpleado ? 'Modificar Empleado' : 'Agregar Empleado'"
+  [modal]="true"
+  (onHide)="hideDialog()"
+>
+  <ng-template pTemplate="content">
+    <div class="flex flex-col gap-6">
+      <div>
+        <label for="nombresEmpleado" class="block font-bold mb-3">Nombre</label>
+        <input
+          type="text"
+          pInputText
+          id="nombresEmpleado"
+          [(ngModel)]="empleado.nombresEmpleado"
+          required
+          autofocus
+          fluid
+        />
+        @if (submitted && !empleado.nombresEmpleado) {
+          <small class="text-red-500">Obligatorio.</small>
+        }
+      </div>
+      <div>
+        <label for="apellidosEmpleado" class="block font-bold mb-3">Apellido</label>
+        <input
+          type="text"
+          pInputText
+          id="apellidosEmpleado"
+          [(ngModel)]="empleado.apellidosEmpleado"
+          required
+          fluid
+        />
+        @if (submitted && !empleado.apellidosEmpleado) {
+          <small class="text-red-500">Obligatorio.</small>
+        }
+      </div>
+      <div>
+        <label for="rutEmpleado" class="block font-bold mb-3">RUT</label>
+        <input
+          type="text"
+          pInputText
+          id="rutEmpleado"
+          [(ngModel)]="empleado.rutEmpleado"
+          required
+          fluid
+        />
+        @if (submitted && !empleado.rutEmpleado) {
+          <small class="text-red-500">Obligatorio.</small>
+        }
+      </div>
+      <div>
+        <label for="emailEmpleado" class="block font-bold mb-3">Correo electrónico</label>
+        <input
+          type="text"
+          pInputText
+          id="emailEmpleado"
+          [(ngModel)]="empleado.emailEmpleado"
+          required
+          fluid
+        />
+        @if (submitted && !empleado.emailEmpleado) {
+          <small class="text-red-500">Obligatorio.</small>
+        }
+      </div>
+      <div>
+        <label for="telefonoEmpleado" class="block font-bold mb-3">Teléfono</label>
+        <input
+          type="text"
+          pInputText
+          id="telefonoEmpleado"
+          [(ngModel)]="empleado.telefonoEmpleado"
+          required
+          fluid
+        />
+        @if (submitted && !empleado.telefonoEmpleado) {
+          <small class="text-red-500">Obligatorio.</small>
+        }
+      </div>
+      <div>
+        <label for="nacionalidadEmpleado" class="block font-bold mb-3">Nacionalidad</label>
+        <input
+          type="text"
+          pInputText
+          id="nacionalidadEmpleado"
+          [(ngModel)]="empleado.nacionalidadEmpleado"
+          required
+          fluid
+        />
+        @if (submitted && !empleado.nacionalidadEmpleado) {
+          <small class="text-red-500">Obligatorio.</small>
+        }
+      </div>
+      <div>
+        <label for="cargoEmpleado" class="bloc fontr-bold mb-3">Cargo</label>
+        <input
+          type="text"
+          pInputText
+          id="cargoEmpleado"
+          [(ngModel)]="empleado.cargoEmpleado"
+          required
+          fluid
+        />
+        @if (submitted && !empleado.cargoEmpleado) {
+          <small class="text-red-500">Obligatorio.</small>
+        }
+      </div>
+      <div></div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-3">
+      <button
+        pButton
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="hideDialog()"
+      ></button>
+      <button
+        pButton
+        label="Guardar"
+        icon="pi pi-check"
+        (click)="saveEmpleado()"
+      ></button>
+    </div>
+  </ng-template>
+</p-dialog>

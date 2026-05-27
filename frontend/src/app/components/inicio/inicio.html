@@ -4,7 +4,10 @@
   </aside>
   <main class="layout-main">
     <div class="layout-content">
-      <app-toolbar (datosActualizados)="obtenerDatos()"></app-toolbar>
+      <app-toolbar 
+        [tipoVistaActual]="tipoVistaActual" 
+        (datosActualizados)="obtenerDatos()">
+      </app-toolbar>
       <app-table-demo
         [datos]="datos"
         [columnas]="columnas"
