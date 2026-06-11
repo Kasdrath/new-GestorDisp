@@ -8,6 +8,8 @@ import { DialogoDispositivo } from '../dialogoDispositivo/dialogoDispositivo';
 import { DialogoEmpleado } from '../dialogoEmpleado/dialogoEmpleado';
 import { dispositivoService } from '../../services/dispositivo.service';
 import { empleadoService } from '../../services/empleado.service';
+import { AsignacionesService } from '../../services/asignaciones.service';
+import { DialogoAsignacion } from '../dialogoAsignacion/dialogoAsignacion';
 
 @Component({
   selector: 'app-toolbar',
@@ -18,23 +20,25 @@ import { empleadoService } from '../../services/empleado.service';
     FileUploadModule,
     DialogoDispositivo,
     DialogoEmpleado,
+    DialogoAsignacion
   ],
   templateUrl: './toolbar.html',
   styleUrl: './toolbar.css',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Toolbar {
   @Input() tipoVistaActual: string = 'Devices';
-  @Output() datosActualizados = new EventEmitter<void>();
+  @Output() datosActualizados = new EventEmitter<string>();
   visible: boolean = false;
   visibleEmpleado: boolean = false;
+  visibleAsignacion: boolean = false;
   dataSelected: any = {};
 
   constructor(
     private messageService: MessageService,
     private dispositivoService: dispositivoService,
     private empleadoService: empleadoService,
+    private asignacionService: AsignacionesService
   ) {}
 
   abrirDialogo() {
@@ -42,6 +46,8 @@ export class Toolbar {
     
     if (this.tipoVistaActual === 'Empleados') {
       this.visibleEmpleado = true;
+    } else if (this.tipoVistaActual === 'Asignacion') {
+      this.visibleAsignacion = true;
     } else {
       this.visible = true;
     }
@@ -52,6 +58,9 @@ export class Toolbar {
   }
   visibleEmpleadoChange(event: boolean) {
     this.visibleEmpleado = event;
+  }
+  visibleAsignacionChange(event: boolean) {
+    this.visibleAsignacion = event;
   }
 
   guardarDispositivo(dispositivoGuardado: any) {
@@ -67,7 +76,7 @@ export class Toolbar {
               detail: 'Dispositivo actualizado correctamente',
               life: 3000,
             });
-            this.datosActualizados.emit();
+            this.datosActualizados.emit('dispositivos');
           },
           error: (error) => {
             console.error('Error al actualizar el dispositivo:', error);
@@ -88,7 +97,7 @@ export class Toolbar {
             detail: 'Dispositivo agregado correctamente',
             life: 3000,
           });
-          this.datosActualizados.emit();
+          this.datosActualizados.emit('dispositivos');
         },
         error: (error) => {
           console.error('Error al crear el dispositivo:', error);
@@ -108,7 +117,7 @@ export class Toolbar {
         next: (response) => {
           console.log('Empleado actualizado:', response);
           this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Empleado actualizado correctamente', life: 3000 });
-          this.datosActualizados.emit();
+          this.datosActualizados.emit('empleados');
         },
         error: (error) => {
           console.error('Error al actualizar el empleado:', error);
@@ -120,7 +129,7 @@ export class Toolbar {
         next: (response) => {
           console.log('Empleado creado:', response);
           this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Empleado agregado correctamente', life: 3000 });
-          this.datosActualizados.emit();
+          this.datosActualizados.emit('empleados');
         },
         error: (error) => {
           console.error('Error al crear el empleado:', error);
@@ -128,5 +137,22 @@ export class Toolbar {
         },
       });
     }
+  }
+
+  guardarAsignacion(asignacion: any) {
+    this.asignacionService.vincular(asignacion.idEmpleado, asignacion.idDispositivo).subscribe({
+      next: (response) => {
+        console.log('Asignación creada:', response);
+        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Asignación creada correctamente', life: 3000 });
+        this.visibleAsignacion = false;
+        this.datosActualizados.emit('asignaciones');
+        // Emitimos un texto vacío para forzar al componente Inicio a recargar TODO (Asignaciones y Dispositivos)
+        this.datosActualizados.emit('');
+      },
+      error: (error) => {
+        console.error('Error al crear la asignación:', error);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Hubo un error al crear la asignación' });
+      }
+    });
   }
 }

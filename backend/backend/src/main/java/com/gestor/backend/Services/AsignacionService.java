@@ -31,6 +31,10 @@ public class AsignacionService {
 
         Dispositivo dispositivo = dispositivoRepo.findById(idDispositivo).orElseThrow(() -> new RuntimeException("Dispositivo no encontrado con ID: " + idDispositivo));
 
+        if (!dispositivo.getEstadoDisp()) {
+            throw new RuntimeException("El dispositivo se encuentra dado de baja (Inactivo) y no puede ser asignado.");
+        }
+
         List<Asignacion> asignacionesActivas = asignacionRepo.findByDispositivoIdDispositivoAndFechaDesvinculacionIsNull(idDispositivo);
         if (!asignacionesActivas.isEmpty()) {
             throw new RuntimeException("El dispositivo ya se encuentra asignado actualmente a un empleado y no ha sido devuelto.");

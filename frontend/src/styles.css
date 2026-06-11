@@ -11,7 +11,29 @@
 .p-datatable .p-datatable-thead > tr > th,
 .p-datatable .p-datatable-tbody > tr > td,
 .p-datatable-footer,
-.p-datatable-wrapper {
+.p-datatable-wrapper,
+.p-paginator,
+.p-datatable .p-inputtext,
+.p-datatable .p-button,
+.p-paginator .p-select,
+.p-paginator .p-dropdown,
+.p-paginator .p-select .p-select-label,
+.p-paginator .p-dropdown .p-dropdown-label {
+  background-color: white !important;
+  color: black !important;
+}
+
+/* Estilos para las opciones de la lista desplegable (se renderizan globalmente) */
+.p-select-panel,
+.p-dropdown-panel,
+.p-select-item,
+.p-dropdown-item {
+  color: black !important;
+}
+
+/* Fondo blanco para el Toolbar */
+.p-toolbar,
+.p-toolbar .p-button {
   background-color: white !important;
   color: black !important;
 }

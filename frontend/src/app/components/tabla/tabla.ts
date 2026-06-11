@@ -14,11 +14,11 @@ import { DialogoDispositivo } from '../dialogoDispositivo/dialogoDispositivo';
 import { DialogoEmpleado } from '../dialogoEmpleado/dialogoEmpleado';
 import { dispositivoService } from '../../services/dispositivo.service';
 import { empleadoService } from '../../services/empleado.service';
+import { AsignacionesService } from '../../services/asignaciones.service';
 import { MessageService } from 'primeng/api';
 
 @Component({
   templateUrl: './tabla.html',
-  standalone: true,
   selector: 'app-table-demo',
   imports: [
     TableModule,
@@ -40,8 +40,8 @@ export class TableBasicDemo implements OnInit {
   @Input() datos: any[] = [];
   @Input() columnas: any[] = [];
   @Input() camposFiltroGlobal: string[] = [];
-  @Output() datosActualizados = new EventEmitter<void>();
-  loading: boolean = true;
+  @Output() datosActualizados = new EventEmitter<string>();
+  @Input() loading: boolean = false;
   visible: boolean = false;
   dataSelected: any = {};
   visibleEmpleado: boolean = false;
@@ -49,6 +49,7 @@ export class TableBasicDemo implements OnInit {
   constructor(
     private dispositivoService: dispositivoService,
     private empleadoService: empleadoService,
+    private asignacionService: AsignacionesService,
     private messageService: MessageService
   ) {}
 
@@ -60,7 +61,6 @@ export class TableBasicDemo implements OnInit {
   }
 
   ngOnInit() {
-    this.loading = false;
   }
 
   abrirDialogo() {
@@ -76,11 +76,19 @@ export class TableBasicDemo implements OnInit {
     this.visibleEmpleado = event;
   }
 
+  getNestedValue(obj: any, path: string): any {
+    if (!obj || !path) return null;
+    return path.split('.').reduce((o, p) => (o ? o[p] : null), obj);
+  }
+
   clear(table: Table) {
     table.clear();
   }
 
-  getSeverity(estado: boolean) {
+  getSeverity(estado: boolean, field: string = 'estadoDisp') {
+    if (field === 'enUso') {
+      return estado ? 'info' : 'success'; // info (azul) si está asignado, success (verde) si está disponible
+    }
     return estado ? 'success' : 'danger';
   }
 
@@ -109,7 +117,7 @@ export class TableBasicDemo implements OnInit {
           next: () => {
             console.log('Dispositivo eliminado correctamente');
             this.datos = this.datos.filter((d) => d.idDispositivo !== data.idDispositivo);
-            this.datosActualizados.emit();
+            this.datosActualizados.emit('dispositivos');
           },
           error: (error) => console.error('Error al eliminar el dispositivo:', error),
         });
@@ -124,25 +132,48 @@ export class TableBasicDemo implements OnInit {
           next: () => {
             console.log('Empleado eliminado correctamente');
             this.datos = this.datos.filter((e) => e.idEmpleado !== data.idEmpleado);
-            this.datosActualizados.emit();
+            this.datosActualizados.emit('empleados');
           },
           error: (error) => console.error('Error al eliminar el empleado:', error),
+        });
+      }
+    } else if ('idAsignacion' in data) {
+      if (
+        confirm(
+          `¿Estás seguro de desvincular el dispositivo ${data.dispositivo?.numeroSerie} del empleado ${data.empleado?.nombresEmpleado}?`
+        )
+      ) {
+        this.asignacionService.eliminar(data.idAsignacion).subscribe({
+          next: () => {
+            this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Dispositivo desvinculado correctamente', life: 3000 });
+            this.datosActualizados.emit(''); // Refresca todas las tablas para actualizar los estados
+          },
+          error: (error) => {
+            console.error('Error al desvincular:', error);
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Hubo un error al desvincular' });
+          },
         });
       }
     }
   }
 
-  /* editarDispositivo(dispositivo: any) {
-    this.dispositivoSeleccionado = { ...dispositivo };
-
-    if (this.dispositivoSeleccionado.fechaCompra) {
-      const [year, month, day] = String(this.dispositivoSeleccionado.fechaCompra)
-        .split('-')
-        .map(Number);
-      this.dispositivoSeleccionado.fechaCompra = new Date(year, month - 1, day);
+  reactivarEmpleado(empleado: any) {
+    if (
+      confirm(`¿Estás seguro de reactivar al empleado ${empleado.nombresEmpleado} ${empleado.apellidosEmpleado}?`)
+    ) {
+      const empleadoActualizado = { ...empleado, estadoEmpleado: true };
+      this.empleadoService.actualizar(empleado.idEmpleado, empleadoActualizado).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Empleado reactivado correctamente', life: 3000 });
+          this.datosActualizados.emit('empleados');
+        },
+        error: (error) => {
+          console.error('Error al reactivar el empleado:', error);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Hubo un error al reactivar el empleado' });
+        },
+      });
     }
-    this.visible = true;
-  }*/
+  }
 
   eliminarDispositivo(dispositivo: any) {
     if (
@@ -154,7 +185,7 @@ export class TableBasicDemo implements OnInit {
         next: () => {
           console.log('Dispositivo eliminado correctamente');
           this.datos = this.datos.filter((d) => d.idDispositivo !== dispositivo.idDispositivo);
-          this.datosActualizados.emit();
+          this.datosActualizados.emit('dispositivos');
         },
         error: (error) => {
           console.error('Error al eliminar el dispositivo:', error);
@@ -171,7 +202,7 @@ export class TableBasicDemo implements OnInit {
           next: (response) => {
             console.log('Dispositivo actualizado:', response);
             this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Dispositivo actualizado correctamente', life: 3000 });
-            this.datosActualizados.emit();
+            this.datosActualizados.emit('dispositivos');
           },
           error: (error) => {
             console.error('Error al actualizar el dispositivo:', error);
@@ -183,7 +214,7 @@ export class TableBasicDemo implements OnInit {
         next: (response) => {
           console.log('Dispositivo creado:', response);
           this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Dispositivo agregado correctamente', life: 3000 });
-          this.datosActualizados.emit();
+          this.datosActualizados.emit('dispositivos');
         },
         error: (error) => {
           console.error('Error al crear el dispositivo:', error);
@@ -198,7 +229,7 @@ export class TableBasicDemo implements OnInit {
         next: (response) => {
           console.log('Empleado actualizado:', response);
           this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Empleado actualizado correctamente', life: 3000 });
-          this.datosActualizados.emit();
+          this.datosActualizados.emit('empleados');
         },
         error: (error) => {
           console.error('Error al actualizar el empleado:', error);

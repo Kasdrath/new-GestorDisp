@@ -17,6 +17,7 @@ export class PanelmenuBasicDemo implements OnInit {
             {
                 label: 'Devices',
                 icon: 'pi pi-desktop',
+                
                 command: () => this.onDeviceSelect.emit("Devices"),
                 items: [
                     {
@@ -36,6 +37,11 @@ export class PanelmenuBasicDemo implements OnInit {
                 icon: 'pi pi-user',
                 command: () => this.onDeviceSelect.emit("Empleados")
             },
+            {
+                label: 'Asignacion',
+                icon: 'pi pi-sitemap',
+                command: () =>this.onDeviceSelect.emit("Asignacion")
+            }
         ];
     }
 }

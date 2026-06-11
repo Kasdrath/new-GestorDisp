@@ -35,6 +35,8 @@ public class Empleado {
     private String nacionalidadEmpleado;
     private String cargoEmpleado;
 
+    private Boolean estadoEmpleado = true;
+
     @OneToMany(mappedBy="empleado",cascade=CascadeType.ALL)
     @ToString.Exclude
     private List<Asignacion> asignaciones = new ArrayList<>();

@@ -6,13 +6,14 @@
     <div class="layout-content">
       <app-toolbar 
         [tipoVistaActual]="tipoVistaActual" 
-        (datosActualizados)="obtenerDatos()">
+        (datosActualizados)="obtenerDatos($event)">
       </app-toolbar>
       <app-table-demo
+        [loading]="loading"
         [datos]="datos"
         [columnas]="columnas"
         [camposFiltroGlobal]="camposFiltroGlobal"
-        (datosActualizados)="obtenerDatos()"
+        (datosActualizados)="obtenerDatos($event)"
       ></app-table-demo>
     </div>
   </main>

@@ -4,6 +4,7 @@ import { PanelmenuBasicDemo } from '../menupanel/menupanel';
 import { TableBasicDemo } from '../tabla/tabla';
 import { dispositivoService } from '../../services/dispositivo.service';
 import { empleadoService } from '../../services/empleado.service';
+import { AsignacionesService } from '../../services/asignaciones.service';
 import { Toolbar } from '../toolbar/toolbar';
 import { MessageService } from 'primeng/api';
 
@@ -17,16 +18,17 @@ import { MessageService } from 'primeng/api';
 export class Inicio {
   private dispositivoService = inject(dispositivoService);
   private empleadoService = inject(empleadoService);
+  private asignacionService = inject(AsignacionesService);
   private cdr = inject(ChangeDetectorRef);
 
   dispositivos: any[] = [];
   empleados: any[] = [];
+  asignaciones: any[] = [];
   mostrarTablaComp = false;
   datos: any[] = [];
   columnas: any[] = [];
   camposFiltroGlobal: any[] = [];
   loading: boolean = true;
-  //tipoVistaActual: string = 'Devices';
   tipoVistaActual: string = 'Devices';
 
   private columnasBase = [
@@ -36,6 +38,7 @@ export class Inicio {
     { field: 'modeloDisp', header: 'Modelo', type: 'text' },
     { field: 'fechaCompra', header: 'Fecha Compra', type: 'date' },
     { field: 'estadoDisp', header: 'Estado', type: 'boolean' },
+    { field: 'enUso', header: 'Disponibilidad', type: 'boolean' },
   ];
   ngOnInit() {
     this.obtenerDatos();
@@ -43,13 +46,18 @@ export class Inicio {
 
   obtenerDatos(entidad?: string) {
     this.loading = true;
+    this.cdr.detectChanges(); // Forzamos a Angular a mostrar el spinner de carga
 
     // Si no se envía entidad, o es explícitamente 'dispositivos', se recargan
     if (!entidad || entidad === 'dispositivos') {
       this.dispositivoService.obtenerTodos().subscribe({
         next: (data) => {
           console.log('Dispositivos recibidos del backend:', data);
-          this.dispositivos = [...data];
+          // Calculamos dinámicamente si el dispositivo está asignado a un empleado
+          this.dispositivos = data.map((d: any) => ({
+            ...d,
+            enUso: d.asignaciones && d.asignaciones.some((a: any) => !a.fechaDesvinculacion)
+          }));
           this.cargarTablaDispositivos(this.tipoVistaActual);
           this.loading = false;
           this.cdr.detectChanges();
@@ -60,13 +68,16 @@ export class Inicio {
         }
       });
     }
-
     // Si no se envía entidad, o es explícitamente 'empleados', se recargan
     if (!entidad || entidad === 'empleados') {
       this.empleadoService.obtenerTodos().subscribe({
         next: (data) => {
           console.log('Empleados recibidos del backend:', data);
-          this.empleados = [...data];
+          // Mapeamos para asegurar que los empleados antiguos sin estado aparezcan como Activos
+          this.empleados = data.map((e: any) => ({
+            ...e,
+            estadoEmpleado: e.estadoEmpleado !== false 
+          }));
           this.cargarTablaDispositivos(this.tipoVistaActual);
           this.loading = false;
           this.cdr.detectChanges();
@@ -77,10 +88,25 @@ export class Inicio {
         }
       });
     }
+    if (!entidad || entidad === 'asignaciones') {
+      // Aquí deberías llamar a tu servicio de asignaciones para obtener los datos
+      this.asignacionService.obtenerTodos().subscribe({
+        next: (data) => {
+          console.log('Asignaciones recibidas del backend:', data);
+          this.asignaciones = [...data];
+          this.cargarTablaDispositivos(this.tipoVistaActual);
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error al obtener asignaciones:', error);
+          this.loading = false;
+        }
+      });
+    }
   }
 
   cargarTablaDispositivos(deviceType: string) {
-    //this.tipoVistaActual = deviceType;
     this.tipoVistaActual = deviceType;
 
     switch (deviceType) {
@@ -115,10 +141,22 @@ export class Inicio {
           { field: 'telefonoEmpleado', header: 'Teléfono', type: 'text' },
           { field: 'nacionalidadEmpleado', header: 'Nacionalidad', type: 'text' },
           { field: 'cargoEmpleado', header: 'Cargo', type: 'text' },
+          { field: 'estadoEmpleado', header: 'Estado', type: 'boolean' },
         ];
-
         this.datos = this.empleados;
         break;
+      case 'Asignacion':
+          this.columnas = [
+            { field: 'idAsignacion', header: 'ID', type: 'numeric' },
+            { field: 'dispositivo.numeroSerie', header: 'N/S Dispositivo', type: 'text' },
+            { field: 'empleado.nombresEmpleado', header: 'Nombre Empleado', type: 'text' },
+            { field: 'empleado.apellidosEmpleado', header: 'Apellido Empleado', type: 'text' },
+            { field: 'fechaAsignacion', header: 'Fecha Asignacion', type: 'date' },
+            { field: 'fechaDesvinculacion', header: 'Fecha Desvinculación', type: 'date' },
+          ];
+          
+          this.datos = [...this.asignaciones];
+          break;
       default:
         this.columnas = [...this.columnasBase];
         this.datos = [...this.dispositivos];
