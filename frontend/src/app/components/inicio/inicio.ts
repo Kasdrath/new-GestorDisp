@@ -38,7 +38,6 @@ export class Inicio {
     { field: 'modeloDisp', header: 'Modelo', type: 'text' },
     { field: 'fechaCompra', header: 'Fecha Compra', type: 'date' },
     { field: 'estadoDisp', header: 'Estado', type: 'boolean' },
-    { field: 'enUso', header: 'Disponibilidad', type: 'boolean' },
   ];
   ngOnInit() {
     this.obtenerDatos();
@@ -93,7 +92,11 @@ export class Inicio {
       this.asignacionService.obtenerTodos().subscribe({
         next: (data) => {
           console.log('Asignaciones recibidas del backend:', data);
-          this.asignaciones = [...data];
+          this.asignaciones = data.map((a: any) => ({
+            ...a,
+            fechaAsignacion: this.formatearFechaIso(a.fechaAsignacion),
+            fechaDesvinculacion: this.formatearFechaIso(a.fechaDesvinculacion)
+          }));
           this.cargarTablaDispositivos(this.tipoVistaActual);
           this.loading = false;
           this.cdr.detectChanges();
@@ -104,6 +107,20 @@ export class Inicio {
         }
       });
     }
+  }
+
+  private formatearFechaIso(fecha: any): string | null {
+    if (!fecha) return null;
+    if (typeof fecha !== 'string') return String(fecha); // Justo por si el backend mandara un tipo no soportado
+    // Transforma "DD-MM-YYYY HH:mm:ss" a "YYYY-MM-DDTHH:mm:ss"
+    const partes = fecha.split(' ');
+    if (partes.length === 2 && partes[0].includes('-')) {
+      const [dia, mes, anio] = partes[0].split('-');
+      if (dia && mes && anio && dia.length <= 2 && anio.length === 4) {
+        return `${anio}-${mes}-${dia}T${partes[1]}`;
+      }
+    }
+    return fecha; // Si ya es formato ISO u otro, lo retornamos sin tocar
   }
 
   cargarTablaDispositivos(deviceType: string) {
@@ -151,8 +168,8 @@ export class Inicio {
             { field: 'dispositivo.numeroSerie', header: 'N/S Dispositivo', type: 'text' },
             { field: 'empleado.nombresEmpleado', header: 'Nombre Empleado', type: 'text' },
             { field: 'empleado.apellidosEmpleado', header: 'Apellido Empleado', type: 'text' },
-            { field: 'fechaAsignacion', header: 'Fecha Asignación', type: 'datetime' },
-            { field: 'fechaDesvinculacion', header: 'Fecha Desvinculación', type: 'datetime' },
+            { field: 'fechaAsignacion', header: 'Fecha Asignación', type: 'date' },
+            { field: 'fechaDesvinculacion', header: 'Fecha Desvinculación', type: 'date' },
           ];
           
           this.datos = [...this.asignaciones];

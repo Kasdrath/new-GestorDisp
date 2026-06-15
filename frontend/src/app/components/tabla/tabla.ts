@@ -139,11 +139,26 @@ export class TableBasicDemo implements OnInit {
     table.clear();
   }
 
-  getSeverity(estado: boolean, field: string = 'estadoDisp') {
-    if (field === 'enUso') {
-      return estado ? 'info' : 'success'; // info (azul) si está asignado, success (verde) si está disponible
+  getTextoEstado(rowData: any, field: string): string {
+    if (field === 'estadoDisp') {
+      if (rowData.estadoDisp === false) return 'Dado de baja';
+      return rowData.enUso ? 'Asignado' : 'Disponible';
     }
-    return estado ? 'success' : 'danger';
+    if (field === 'estadoEmpleado') {
+      return rowData.estadoEmpleado === false ? 'Dado de baja' : 'Activo';
+    }
+    return rowData[field] ? 'Sí' : 'No';
+  }
+
+  getSeveridadEstado(rowData: any, field: string): any {
+    if (field === 'estadoDisp') {
+      if (rowData.estadoDisp === false) return 'danger';
+      return rowData.enUso ? 'info' : 'success';
+    }
+    if (field === 'estadoEmpleado') {
+      return rowData.estadoEmpleado === false ? 'danger' : 'success';
+    }
+    return rowData[field] ? 'success' : 'danger';
   }
 
   editarDatos(data: any) {
@@ -172,9 +187,15 @@ export class TableBasicDemo implements OnInit {
 
     this.asignacionService.obtenerTodos().subscribe({
       next: (asignaciones: any[]) => {
+        const asignacionesFormateadas = asignaciones.map(a => ({
+          ...a,
+          fechaAsignacion: this.formatearFechaIso(a.fechaAsignacion),
+          fechaDesvinculacion: this.formatearFechaIso(a.fechaDesvinculacion)
+        }));
+
         this.historialSeleccionado = this.esHistorialDispositivo
-          ? asignaciones.filter(a => a.dispositivo?.idDispositivo === data.idDispositivo)
-          : asignaciones.filter(a => a.empleado?.idEmpleado === data.idEmpleado);
+          ? asignacionesFormateadas.filter(a => a.dispositivo?.idDispositivo === data.idDispositivo)
+          : asignacionesFormateadas.filter(a => a.empleado?.idEmpleado === data.idEmpleado);
 
         // Ordenar del más reciente al más antiguo
         this.historialSeleccionado.sort((a, b) => 
@@ -183,6 +204,19 @@ export class TableBasicDemo implements OnInit {
       },
       error: (err) => console.error('Error cargando historial', err)
     });
+  }
+
+  private formatearFechaIso(fecha: any): string | null {
+    if (!fecha) return null;
+    if (typeof fecha !== 'string') return String(fecha); // Prevención de errores de formato
+    const partes = fecha.split(' ');
+    if (partes.length === 2 && partes[0].includes('-')) {
+      const [dia, mes, anio] = partes[0].split('-');
+      if (dia && mes && anio && dia.length <= 2 && anio.length === 4) {
+        return `${anio}-${mes}-${dia}T${partes[1]}`;
+      }
+    }
+    return fecha;
   }
 
   exportarHistorial() {
@@ -241,7 +275,7 @@ export class TableBasicDemo implements OnInit {
           next: () => {
             console.log('Dispositivo eliminado correctamente');
             this.datos = this.datos.filter((d) => d.idDispositivo !== data.idDispositivo);
-            this.datosActualizados.emit('dispositivos');
+            this.datosActualizados.emit('');
           },
           error: (error) => console.error('Error al eliminar el dispositivo:', error),
         });
@@ -256,7 +290,7 @@ export class TableBasicDemo implements OnInit {
           next: () => {
             console.log('Empleado eliminado correctamente');
             this.datos = this.datos.filter((e) => e.idEmpleado !== data.idEmpleado);
-            this.datosActualizados.emit('empleados');
+            this.datosActualizados.emit('');
           },
           error: (error) => console.error('Error al eliminar el empleado:', error),
         });
@@ -289,7 +323,7 @@ export class TableBasicDemo implements OnInit {
       this.empleadoService.actualizar(empleado.idEmpleado, empleadoActualizado).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Empleado reactivado correctamente', life: 3000 });
-          this.datosActualizados.emit('empleados');
+          this.datosActualizados.emit('');
         },
         error: (error) => {
           console.error('Error al reactivar el empleado:', error);
@@ -309,7 +343,7 @@ export class TableBasicDemo implements OnInit {
         next: () => {
           console.log('Dispositivo eliminado correctamente');
           this.datos = this.datos.filter((d) => d.idDispositivo !== dispositivo.idDispositivo);
-          this.datosActualizados.emit('dispositivos');
+          this.datosActualizados.emit('');
         },
         error: (error) => {
           console.error('Error al eliminar el dispositivo:', error);
@@ -326,7 +360,7 @@ export class TableBasicDemo implements OnInit {
           next: (response) => {
             console.log('Dispositivo actualizado:', response);
             this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Dispositivo actualizado correctamente', life: 3000 });
-            this.datosActualizados.emit('dispositivos');
+            this.datosActualizados.emit('');
           },
           error: (error) => {
             console.error('Error al actualizar el dispositivo:', error);
@@ -338,7 +372,7 @@ export class TableBasicDemo implements OnInit {
         next: (response) => {
           console.log('Dispositivo creado:', response);
           this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Dispositivo agregado correctamente', life: 3000 });
-          this.datosActualizados.emit('dispositivos');
+          this.datosActualizados.emit('');
         },
         error: (error) => {
           console.error('Error al crear el dispositivo:', error);
@@ -353,7 +387,7 @@ export class TableBasicDemo implements OnInit {
         next: (response) => {
           console.log('Empleado actualizado:', response);
           this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Empleado actualizado correctamente', life: 3000 });
-          this.datosActualizados.emit('empleados');
+          this.datosActualizados.emit('');
         },
         error: (error) => {
           console.error('Error al actualizar el empleado:', error);

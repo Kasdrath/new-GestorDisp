@@ -15,7 +15,7 @@
       <div class="flex items-center">
         <p-button 
           [icon]="mostrarInactivos ? 'pi pi-eye-slash' : 'pi pi-eye'" 
-          [label]="mostrarInactivos ? 'Ocultar Inactivos' : 'Mostrar Inactivos'" 
+          [label]="mostrarInactivos ? 'Ocultar dados de baja' : 'Mostrar dados de baja'" 
           [outlined]="true" 
           severity="secondary" 
           (onClick)="mostrarInactivos = !mostrarInactivos" 
@@ -54,8 +54,8 @@
               {{ getNestedValue(rowData, col.field) | date: 'dd/MM/yyyy HH:mm:ss' }}
             } @else if (col.type === 'boolean') {
               <p-tag
-            [value]="col.field === 'enUso' ? (getNestedValue(rowData, col.field) ? 'Asignado' : 'Disponible') : (getNestedValue(rowData, col.field) ? 'Activo' : 'Inactivo')"
-            [severity]="getSeverity(getNestedValue(rowData, col.field), col.field)"
+            [value]="getTextoEstado(rowData, col.field)"
+            [severity]="getSeveridadEstado(rowData, col.field)"
               >
               </p-tag>
             } @else {

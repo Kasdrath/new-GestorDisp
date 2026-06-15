@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gestor.backend.Repository.AsignacionRepository;
 import com.gestor.backend.Repository.DispositivoRepository;
 import com.gestor.backend.model.Computador;
 import com.gestor.backend.model.Dispositivo;
@@ -19,6 +20,9 @@ public class DispositivoService {
     @Autowired
     private DispositivoRepository dispositivoRepo;
 
+    @Autowired
+    private AsignacionRepository asignacionRepo;
+
     public Dispositivo crearNuevoDispositivo(Dispositivo nuevoDispositivo) {
         if (nuevoDispositivo.getNumeroSerie() != null && dispositivoRepo.findByNumeroSerie(nuevoDispositivo.getNumeroSerie()).isPresent()) {
             throw new RuntimeException("El número de serie ya está registrado en otro dispositivo");
@@ -26,6 +30,7 @@ public class DispositivoService {
         return dispositivoRepo.save(nuevoDispositivo);
     }
 
+    @Transactional
     public Dispositivo modificarDispositivo(Long id, Dispositivo dispositivoEditado) {
         Dispositivo dispositivoExistente = dispositivoRepo.findById(id).orElseThrow(() -> new RuntimeException("Dispositivo no encontrado con ID: " + id));
 
@@ -34,6 +39,20 @@ public class DispositivoService {
             !dispositivoEditado.getNumeroSerie().equals(dispositivoExistente.getNumeroSerie())) {
             if (dispositivoRepo.findByNumeroSerie(dispositivoEditado.getNumeroSerie()).isPresent()) {
                 throw new RuntimeException("El nuevo número de serie ya pertenece a otro dispositivo");
+            }
+        }
+
+        // Si el estado cambia de Activo (true) a Dado de baja (false), desvincular al trabajador
+        if (dispositivoExistente.getEstadoDisp() != null && dispositivoExistente.getEstadoDisp() && 
+            (dispositivoEditado.getEstadoDisp() == null || !dispositivoEditado.getEstadoDisp())) {
+            boolean tieneAsignacionesActivas = dispositivoExistente.getAsignaciones().stream()
+                .anyMatch(a -> a.getFechaDesvinculacion() == null);
+            if (tieneAsignacionesActivas) {
+                dispositivoExistente.getAsignaciones().stream().filter(a -> a.getFechaDesvinculacion() == null)
+                    .forEach(a -> {
+                        a.setFechaDesvinculacion(OffsetDateTime.now(ZoneId.of("America/Santiago")));
+                        asignacionRepo.save(a);
+                    });
             }
         }
 
@@ -69,7 +88,10 @@ public class DispositivoService {
         if (tieneAsignacionesActivas) {
             // Desvincular automáticamente el dispositivo marcando la fecha actual
             dispositivo.getAsignaciones().stream().filter(a -> a.getFechaDesvinculacion() == null)
-                .forEach(a -> a.setFechaDesvinculacion(OffsetDateTime.now(ZoneId.of("America/Santiago"))));
+                .forEach(a -> {
+                    a.setFechaDesvinculacion(OffsetDateTime.now(ZoneId.of("America/Santiago")));
+                    asignacionRepo.save(a);
+                });
         }
         
         // Borrado lógico: marcamos el dispositivo como inactivo o dado de baja para conservar el historial
