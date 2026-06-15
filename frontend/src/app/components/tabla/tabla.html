@@ -1,7 +1,8 @@
 <div class="card">
+  @if (columnas.length > 0) {
   <p-table
     #dt2
-    [value]="datos"
+    [value]="datosFiltrados"
     [columns]="columnas"
     [rows]="10"
     [rowsPerPageOptions]="[10, 25, 50]"
@@ -11,7 +12,14 @@
     [tableStyle]="{ 'min-width': '50rem' }"
   >
     <ng-template #caption>
-      <div class="flex">
+      <div class="flex items-center">
+        <p-button 
+          [icon]="mostrarInactivos ? 'pi pi-eye-slash' : 'pi pi-eye'" 
+          [label]="mostrarInactivos ? 'Ocultar Inactivos' : 'Mostrar Inactivos'" 
+          [outlined]="true" 
+          severity="secondary" 
+          (onClick)="mostrarInactivos = !mostrarInactivos" 
+        />
         <p-iconfield iconPosition="left" class="ml-auto">
           <p-inputicon>
             <i class="pi pi-search"></i>
@@ -34,11 +42,16 @@
       </tr>
     </ng-template>
     <ng-template #body let-rowData let-columns="columns">
-      <tr>
+      <tr [style.opacity]="rowData.idAsignacion !== undefined && rowData.fechaDesvinculacion ? '0.5' : '1'">
         @for (col of columns; track col.field) {
-          <td>
+          <td 
+            (click)="verDetalles(rowData)" 
+            [class.cursor-pointer]="(rowData.idDispositivo !== undefined || rowData.idEmpleado !== undefined) && rowData.idAsignacion === undefined"
+          >
             @if (col.type === 'date') {
-              {{ getNestedValue(rowData, col.field) | date: 'shortDate' }}
+              {{ getNestedValue(rowData, col.field) | date: 'dd/MM/yyyy' }}
+            } @else if (col.type === 'datetime') {
+              {{ getNestedValue(rowData, col.field) | date: 'dd/MM/yyyy HH:mm:ss' }}
             } @else if (col.type === 'boolean') {
               <p-tag
             [value]="col.field === 'enUso' ? (getNestedValue(rowData, col.field) ? 'Asignado' : 'Disponible') : (getNestedValue(rowData, col.field) ? 'Activo' : 'Inactivo')"
@@ -55,6 +68,7 @@
           <p-button icon="pi pi-undo" severity="success" [rounded]="true" [outlined]="true" (onClick)="reactivarEmpleado(rowData)"/>
         } @else {
           @if (rowData.idAsignacion === undefined) {
+            <p-button icon="pi pi-history" severity="info" class="mr-2" [rounded]="true" [outlined]="true" (onClick)="verHistorial(rowData)"/>
             <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (onClick)="editarDatos(rowData)"/>
           }
           <p-button 
@@ -75,6 +89,34 @@
       </tr>
     </ng-template>
   </p-table>
+  } @else {
+    <!-- Panel de Estadísticas (Dashboard) -->
+    <div class="p-4">
+      <h2 class="text-2xl font-bold mb-6 text-color-secondary"><i class="pi pi-chart-bar mr-2 text-2xl"></i> Resumen de Inventario</h2>
+      <div class="flex flex-wrap gap-4">
+        <div class="flex-1 min-w-[200px] p-4 rounded shadow-2" style="background-color: #eff6ff; border: 1px solid #bfdbfe;">
+          <div class="font-semibold mb-2" style="color: #2563eb;"><i class="pi pi-desktop mr-2"></i>Total Equipos</div>
+          <div class="text-4xl font-bold" style="color: #1e3a8a;">{{ estadisticas?.total || 0 }}</div>
+        </div>
+        <div class="flex-1 min-w-[200px] p-4 rounded shadow-2" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
+          <div class="font-semibold mb-2" style="color: #16a34a;"><i class="pi pi-check-circle mr-2"></i>Disponibles</div>
+          <div class="text-4xl font-bold" style="color: #14532d;">{{ estadisticas?.disponibles || 0 }}</div>
+        </div>
+        <div class="flex-1 min-w-[200px] p-4 rounded shadow-2" style="background-color: #fff7ed; border: 1px solid #fed7aa;">
+          <div class="font-semibold mb-2" style="color: #ea580c;"><i class="pi pi-user mr-2"></i>En Uso (Asignados)</div>
+          <div class="text-4xl font-bold" style="color: #7c2d12;">{{ estadisticas?.enUso || 0 }}</div>
+        </div>
+        <div class="flex-1 min-w-[200px] p-4 rounded shadow-2" style="background-color: #fef2f2; border: 1px solid #fecaca;">
+          <div class="font-semibold mb-2" style="color: #dc2626;"><i class="pi pi-trash mr-2"></i>Dados de Baja</div>
+          <div class="text-4xl font-bold" style="color: #7f1d1d;">{{ estadisticas?.inactivos || 0 }}</div>
+        </div>
+        <div class="flex-1 min-w-[200px] p-4 rounded shadow-2" style="background-color: #faf5ff; border: 1px solid #e9d5ff;">
+          <div class="font-semibold mb-2" style="color: #9333ea;"><i class="pi pi-users mr-2"></i>Empleados Activos</div>
+          <div class="text-4xl font-bold" style="color: #581c87;">{{ estadisticas?.empleadosActivos || 0 }}</div>
+        </div>
+      </div>
+    </div>
+  }
   <app-dialogo-dispositivo
     [visible]="visible"
     [dispositivo]="dataSelected"
@@ -87,4 +129,127 @@
     (visibleChange)="visibleEmpleadoChange($event)"
     (onSave)="guardarEmpleado($event)"
   ></app-dialogo-empleado>
+
+  <!-- Modal de Historial de Asignaciones -->
+  <p-dialog 
+    header="Historial de Asignaciones" 
+    [(visible)]="visibleHistorial" 
+    [modal]="true" 
+    [style]="{ width: '700px', 'max-width': '95vw' }" 
+    appendTo="body"
+  >
+    <div class="mb-4 flex justify-between items-center flex-wrap gap-2">
+      <div class="text-lg font-semibold text-color-secondary">
+        {{ entidadSeleccionadaHistorial }}
+      </div>
+      <p-button 
+        icon="pi pi-file-excel" 
+        label="Exportar Excel" 
+        severity="success" 
+        [outlined]="true" 
+        size="small" 
+        (onClick)="exportarHistorial()" 
+      />
+    </div>
+
+    @if (historialSeleccionado.length > 0) {
+      <p-table [value]="historialSeleccionado" [scrollable]="true" scrollHeight="400px">
+        <ng-template #header>
+          <tr>
+            <th>{{ esHistorialDispositivo ? 'Empleado Asignado' : 'Dispositivo' }}</th>
+            <th>Fecha Asignación</th>
+            <th>Fecha Devolución</th>
+            <th>Estado</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-hist>
+          <tr>
+            <td>
+              @if (esHistorialDispositivo) {
+                <i class="pi pi-user mr-2"></i> {{ hist.empleado?.nombresEmpleado }} {{ hist.empleado?.apellidosEmpleado }}
+              } @else {
+                <i class="pi pi-desktop mr-2"></i> {{ hist.dispositivo?.marcaDisp }} {{ hist.dispositivo?.modeloDisp }} (N/S: {{ hist.dispositivo?.numeroSerie }})
+              }
+            </td>
+            <td>{{ hist.fechaAsignacion | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ hist.fechaDesvinculacion ? (hist.fechaDesvinculacion | date:'dd/MM/yyyy HH:mm') : '-' }}</td>
+            <td>
+              <p-tag 
+                [severity]="hist.fechaDesvinculacion ? 'secondary' : 'success'" 
+                [value]="hist.fechaDesvinculacion ? 'Devuelto' : 'Activo'">
+              </p-tag>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    } @else {
+      <div class="text-center p-4">
+        <i class="pi pi-info-circle text-4xl text-color-secondary mb-2 block"></i>
+        <p>No hay registros en el historial.</p>
+      </div>
+    }
+  </p-dialog>
+
+  <!-- Modal de Detalles (Dispositivos / Empleados) -->
+  <p-dialog 
+    [header]="detallesSeleccionados?.idDispositivo ? 'Detalles del Dispositivo' : 'Detalles del Empleado'" 
+    [(visible)]="visibleDetalles" 
+    [modal]="true" 
+    [style]="{ width: '400px' }" 
+    appendTo="body"
+  >
+    @if (detallesSeleccionados) {
+      @if (detallesSeleccionados.idDispositivo) {
+        <div class="flex flex-col gap-3 mt-4 text-lg">
+          <div class="flex justify-between border-b pb-2">
+            <span class="font-semibold text-color-secondary">Marca:</span>
+            <span>{{ detallesSeleccionados.marcaDisp }}</span>
+          </div>
+          <div class="flex justify-between border-b pb-2">
+            <span class="font-semibold text-color-secondary">Modelo:</span>
+            <span>{{ detallesSeleccionados.modeloDisp }}</span>
+          </div>
+          <div class="flex justify-between border-b pb-2">
+            <span class="font-semibold text-color-secondary">N/S:</span>
+            <span>{{ detallesSeleccionados.numeroSerie }}</span>
+          </div>
+          
+          @if (detallesSeleccionados.tipoDispositivo?.idTipoDisp == 1) {
+            <div class="flex justify-between border-b pb-2">
+              <span class="font-semibold text-color-secondary">Procesador:</span>
+              <span>{{ detallesSeleccionados.procesadorComp }}</span>
+            </div>
+            <div class="flex justify-between border-b pb-2">
+              <span class="font-semibold text-color-secondary">Memoria RAM:</span>
+              <span>{{ detallesSeleccionados.memoriaComp }}</span>
+            </div>
+          } @else if (detallesSeleccionados.tipoDispositivo?.idTipoDisp == 2) {
+            <div class="flex justify-between border-b pb-2">
+              <span class="font-semibold text-color-secondary">Número/IMEI:</span>
+              <span>{{ detallesSeleccionados.numeroTelefono }}</span>
+            </div>
+          }
+        </div>
+      } @else if (detallesSeleccionados.idEmpleado) {
+        <div class="flex flex-col gap-3 mt-4 text-lg">
+          <div class="flex justify-between border-b pb-2">
+            <span class="font-semibold text-color-secondary">RUT:</span>
+            <span>{{ detallesSeleccionados.rutEmpleado }}</span>
+          </div>
+          <div class="flex justify-between border-b pb-2">
+            <span class="font-semibold text-color-secondary">Email:</span>
+            <span>{{ detallesSeleccionados.emailEmpleado }}</span>
+          </div>
+          <div class="flex justify-between border-b pb-2">
+            <span class="font-semibold text-color-secondary">Teléfono:</span>
+            <span>{{ detallesSeleccionados.telefonoEmpleado }}</span>
+          </div>
+          <div class="flex justify-between border-b pb-2">
+            <span class="font-semibold text-color-secondary">Nacionalidad:</span>
+            <span>{{ detallesSeleccionados.nacionalidadEmpleado }}</span>
+          </div>
+        </div>
+      }
+    }
+  </p-dialog>
 </div>

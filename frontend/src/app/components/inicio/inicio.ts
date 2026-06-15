@@ -151,16 +151,22 @@ export class Inicio {
             { field: 'dispositivo.numeroSerie', header: 'N/S Dispositivo', type: 'text' },
             { field: 'empleado.nombresEmpleado', header: 'Nombre Empleado', type: 'text' },
             { field: 'empleado.apellidosEmpleado', header: 'Apellido Empleado', type: 'text' },
-            { field: 'fechaAsignacion', header: 'Fecha Asignacion', type: 'date' },
-            { field: 'fechaDesvinculacion', header: 'Fecha Desvinculación', type: 'date' },
+            { field: 'fechaAsignacion', header: 'Fecha Asignación', type: 'datetime' },
+            { field: 'fechaDesvinculacion', header: 'Fecha Desvinculación', type: 'datetime' },
           ];
           
           this.datos = [...this.asignaciones];
           break;
+      case 'Estadisticas':
+        this.columnas = []; // Al dejar las columnas vacías, la tabla sabrá que debe mostrar el Dashboard
+        this.datos = [...this.dispositivos]; // Le pasamos todos los dispositivos
+        break;
       default:
         this.columnas = [...this.columnasBase];
         this.datos = [...this.dispositivos];
         break;
     }
+
+    this.cdr.detectChanges(); // Forzamos a Angular a repintar la vista de inmediato
   }
 }
