@@ -1,0 +1,58 @@
+<p-dialog 
+  header="Historial de Asignaciones" 
+  [(visible)]="visible" 
+  [modal]="true" 
+  [style]="{ width: '700px', 'max-width': '95vw' }" 
+  appendTo="body"
+>
+  <div class="mb-4 flex justify-between items-center flex-wrap gap-2">
+    <div class="text-lg font-semibold text-color-secondary">
+      {{ tituloEntidad() }}
+    </div>
+    <p-button 
+      icon="pi pi-file-excel" 
+      label="Exportar Excel" 
+      severity="success" 
+      [outlined]="true" 
+      size="small" 
+      (onClick)="exportarHistorial()" 
+    />
+  </div>
+
+  @if (historial().length > 0) {
+    <p-table [value]="historial()" [scrollable]="true" scrollHeight="400px">
+      <ng-template #header>
+        <tr>
+          <th>{{ esDispositivo() ? 'Empleado Asignado' : 'Dispositivo' }}</th>
+          <th>Fecha Asignación</th>
+          <th>Fecha Devolución</th>
+          <th>Estado</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-hist>
+        <tr>
+          <td>
+            @if (esDispositivo()) {
+              <i class="pi pi-user mr-2"></i> {{ hist.empleado?.nombresEmpleado }} {{ hist.empleado?.apellidosEmpleado }}
+            } @else {
+              <i class="pi pi-desktop mr-2"></i> {{ hist.dispositivo?.marcaDisp }} {{ hist.dispositivo?.modeloDisp }} (N/S: {{ hist.dispositivo?.numeroSerie }})
+            }
+          </td>
+          <td>{{ hist.fechaAsignacion | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ hist.fechaDesvinculacion ? (hist.fechaDesvinculacion | date:'dd/MM/yyyy HH:mm') : '-' }}</td>
+          <td>
+            <p-tag 
+              [severity]="hist.fechaDesvinculacion ? 'secondary' : 'success'" 
+              [value]="hist.fechaDesvinculacion ? 'Devuelto' : 'Activo'">
+            </p-tag>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  } @else {
+    <div class="text-center p-4">
+      <i class="pi pi-info-circle text-4xl text-color-secondary mb-2 block"></i>
+      <p>No hay registros en el historial.</p>
+    </div>
+  }
+</p-dialog>

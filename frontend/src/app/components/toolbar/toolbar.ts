@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Output, EventEmitter, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -27,40 +27,47 @@ import { DialogoAsignacion } from '../dialogoAsignacion/dialogoAsignacion';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Toolbar {
-  @Input() tipoVistaActual: string = 'Devices';
-  @Output() datosActualizados = new EventEmitter<string>();
-  visible: boolean = false;
-  visibleEmpleado: boolean = false;
-  visibleAsignacion: boolean = false;
-  dataSelected: any = {};
+  // Regla: Usar input() y output() en lugar de decoradores
+  tipoVistaActual = input<string>('Devices');
+  datosActualizados = output<string>();
 
-  constructor(
-    private messageService: MessageService,
-    private dispositivoService: dispositivoService,
-    private empleadoService: empleadoService,
-    private asignacionService: AsignacionesService
-  ) {}
+  // Regla: Usar signal para el estado local
+  visible = signal(false);
+  visibleEmpleado = signal(false);
+  visibleAsignacion = signal(false);
+  dataSelected = signal<any>({});
+
+  // Regla: Usar inject() en lugar de inyección por constructor
+  private messageService = inject(MessageService);
+  private dispositivoService = inject(dispositivoService);
+  private empleadoService = inject(empleadoService);
+  private asignacionService = inject(AsignacionesService);
 
   abrirDialogo() {
-    this.dataSelected = {};
+    this.dataSelected.set({});
     
-    if (this.tipoVistaActual === 'Empleados') {
-      this.visibleEmpleado = true;
-    } else if (this.tipoVistaActual === 'Asignacion') {
-      this.visibleAsignacion = true;
+    if (this.tipoVistaActual() === 'Empleados') {
+      this.visibleEmpleado.set(true);
+    } else if (this.tipoVistaActual() === 'Asignacion') {
+      this.visibleAsignacion.set(true);
     } else {
-      this.visible = true;
+      this.visible.set(true);
     }
   }
 
-  visibleChange(event: boolean) {
-    this.visible = event;
-  }
-  visibleEmpleadoChange(event: boolean) {
-    this.visibleEmpleado = event;
-  }
-  visibleAsignacionChange(event: boolean) {
-    this.visibleAsignacion = event;
+  editarEntidad(data: any) {
+    if ('idDispositivo' in data) {
+      const dispositivo = { ...data };
+      if (dispositivo.fechaCompra) {
+        const [year, month, day] = String(dispositivo.fechaCompra).split('-').map(Number);
+        dispositivo.fechaCompra = new Date(year, month - 1, day);
+      }
+      this.dataSelected.set(dispositivo);
+      this.visible.set(true);
+    } else if ('idEmpleado' in data) {
+      this.dataSelected.set({ ...data });
+      this.visibleEmpleado.set(true);
+    }
   }
 
   guardarDispositivo(dispositivoGuardado: any) {
@@ -144,7 +151,7 @@ export class Toolbar {
       next: (response) => {
         console.log('Asignación creada:', response);
         this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Asignación creada correctamente', life: 3000 });
-        this.visibleAsignacion = false;
+        this.visibleAsignacion.set(false);
         this.datosActualizados.emit('asignaciones');
         // Emitimos un texto vacío para forzar al componente Inicio a recargar TODO (Asignaciones y Dispositivos)
         this.datosActualizados.emit('');

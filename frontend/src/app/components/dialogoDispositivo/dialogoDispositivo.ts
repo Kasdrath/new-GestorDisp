@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, model, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -34,80 +34,81 @@ import { ToastModule } from 'primeng/toast';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DialogoDispositivo {
+  private messageService = inject(MessageService);
 
-  constructor(private messageService: MessageService) {}
-
-  @Input() dispositivo: any = {};
-  @Input() visible: boolean = false;
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() onSave = new EventEmitter<any>();
-  submitted: boolean = false;
+  // Regla: Usar model() y output() en lugar de decoradores
+  dispositivo = model<any>({});
+  visible = model(false);
+  onSave = output<any>();
+  
+  // Regla: Usar signal para el estado local
+  submitted = signal(false);
+  
   statuses: any[] = [
     { label: 'Activo', value: true },
     { label: 'Dado de baja', value: false },
   ];
+  
   tiposDeDispositivo: any[] = [
     { label: 'Computador', value: 'computador' },
     { label: 'Teléfono', value: 'telefono' },
   ];
 
   openNewDispositivo() {
-    this.dispositivo = {};
-    this.submitted = false;
-    this.visible = true;
-    this.visibleChange.emit(this.visible);
+    this.dispositivo.set({});
+    this.submitted.set(false);
+    this.visible.set(true);
   }
 
   hideDialog() {
-    this.visible = false;
-    this.visibleChange.emit(this.visible);
+    this.visible.set(false);
   }
 
   saveDispositivo() {
-    this.submitted = true;
+    this.submitted.set(true);
+    const disp = this.dispositivo();
     let isValid = !!(
-      this.dispositivo.numeroSerie?.trim() &&
-      this.dispositivo.marcaDisp?.trim() &&
-      this.dispositivo.modeloDisp?.trim() &&
-      this.dispositivo.tamanoPantalla !== null &&
-      this.dispositivo.tamanoPantalla !== undefined &&
-      String(this.dispositivo.tamanoPantalla).trim() !== '' &&
-      this.dispositivo.fechaCompra &&
-      this.dispositivo.estadoDisp !== undefined &&
-      this.dispositivo.tipo
+      disp.numeroSerie?.trim() &&
+      disp.marcaDisp?.trim() &&
+      disp.modeloDisp?.trim() &&
+      disp.tamanoPantalla !== null &&
+      disp.tamanoPantalla !== undefined &&
+      String(disp.tamanoPantalla).trim() !== '' &&
+      disp.fechaCompra &&
+      disp.estadoDisp !== undefined &&
+      disp.tipo
     );
 
-    if (this.dispositivo.tipo === 'computador') {
+    if (disp.tipo === 'computador') {
       isValid =
         isValid &&
         !!(
-          this.dispositivo.procesadorComp?.trim() &&
-          this.dispositivo.memoriaComp?.trim() &&
-          this.dispositivo.almacenamientoComp?.trim()
+          disp.procesadorComp?.trim() &&
+          disp.memoriaComp?.trim() &&
+          disp.almacenamientoComp?.trim()
         );
-    } else if (this.dispositivo.tipo === 'telefono') {
+    } else if (disp.tipo === 'telefono') {
       isValid =
         isValid &&
-        !!(this.dispositivo.numeroTelefono?.trim() && this.dispositivo.companiaTelefono?.trim());
+        !!(disp.numeroTelefono?.trim() && disp.companiaTelefono?.trim());
     }
 
     if (isValid) {
-      if (this.dispositivo.fechaCompra instanceof Date) {
-        const d = this.dispositivo.fechaCompra;
+      if (disp.fechaCompra instanceof Date) {
+        const d = disp.fechaCompra;
         const year = d.getFullYear();
         const month = (d.getMonth() + 1).toString().padStart(2, '0');
         const day = d.getDate().toString().padStart(2, '0');
-        this.dispositivo.fechaCompra = `${year}-${month}-${day}`;
+        disp.fechaCompra = `${year}-${month}-${day}`;
       }
 
-      if (this.dispositivo.tipo === 'computador') {
-        this.dispositivo.tipoDispositivo = { idTipoDisp: 1 };
-      } else if (this.dispositivo.tipo === 'telefono') {
-        this.dispositivo.tipoDispositivo = { idTipoDisp: 2 };
+      if (disp.tipo === 'computador') {
+        disp.tipoDispositivo = { idTipoDisp: 1 };
+      } else if (disp.tipo === 'telefono') {
+        disp.tipoDispositivo = { idTipoDisp: 2 };
       }
 
-      this.onSave.emit(this.dispositivo);
-
+      this.onSave.emit(disp);
       this.hideDialog();
     }
   }

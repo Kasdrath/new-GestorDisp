@@ -2,7 +2,6 @@ package com.gestor.backend.Controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,12 +23,13 @@ import com.gestor.backend.model.Empleado;
 @CrossOrigin(origins = "*") 
 public class EmpleadoController {
 
-    @Autowired
-    private EmpleadoService empleadoService;
+    private final EmpleadoService empleadoService;
+    private final EmpleadoRepository empleadoRepo;
 
-    @Autowired
-    private EmpleadoRepository empleadoRepo;
-
+    public EmpleadoController(EmpleadoService empleadoService, EmpleadoRepository empleadoRepo) {
+        this.empleadoService = empleadoService;
+        this.empleadoRepo = empleadoRepo;
+    }
     @GetMapping
     public List<Empleado> obtenerTodosEmpleados() {
         return empleadoRepo.findAll();

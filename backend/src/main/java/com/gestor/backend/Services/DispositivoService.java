@@ -3,7 +3,6 @@ package com.gestor.backend.Services;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +16,13 @@ import com.gestor.backend.model.Telefono;
 @Service
 public class DispositivoService {
 
-    @Autowired
-    private DispositivoRepository dispositivoRepo;
+    private final DispositivoRepository dispositivoRepo;
+    private final AsignacionRepository asignacionRepo;
 
-    @Autowired
-    private AsignacionRepository asignacionRepo;
+    public DispositivoService(DispositivoRepository dispositivoRepo, AsignacionRepository asignacionRepo) {
+        this.dispositivoRepo = dispositivoRepo;
+        this.asignacionRepo = asignacionRepo;
+    }
 
     public Dispositivo crearNuevoDispositivo(Dispositivo nuevoDispositivo) {
         if (nuevoDispositivo.getNumeroSerie() != null && dispositivoRepo.findByNumeroSerie(nuevoDispositivo.getNumeroSerie()).isPresent()) {

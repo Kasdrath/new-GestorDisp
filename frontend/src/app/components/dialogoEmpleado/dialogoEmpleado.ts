@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, model, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -12,6 +12,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
 @Component({
   selector: 'app-dialogo-empleado',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -28,36 +29,38 @@ import { InputNumberModule } from 'primeng/inputnumber';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DialogoEmpleado {
-  @Input() empleado: any = {};
-  @Input() visible: boolean = false;
-  @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() onSave = new EventEmitter<any>();
-  submitted: boolean = false;
+  // Regla: Usar model() y output() en lugar de decoradores
+  empleado = model<any>({});
+  visible = model(false);
+  onSave = output<any>();
+  
+  // Regla: Usar signal para el estado local
+  submitted = signal(false);
 
   openNewEmpleado() {
-    this.empleado = {};
-    this.submitted = false;
-    this.visible = true;
-    this.visibleChange.emit(this.visible);
+    this.empleado.set({});
+    this.submitted.set(false);
+    this.visible.set(true);
   }
 
   hideDialog() {
-    this.visible = false;
-    this.visibleChange.emit(this.visible);
+    this.visible.set(false);
   }
+
   saveEmpleado() {
-    this.submitted = true;
+    this.submitted.set(true);
+    const emp = this.empleado();
     let isValid = !!(
-      this.empleado.nombresEmpleado?.trim() &&
-      this.empleado.apellidosEmpleado?.trim() &&
-      this.empleado.rutEmpleado?.trim() &&
-      this.empleado.emailEmpleado?.trim() &&
-      this.empleado.telefonoEmpleado?.trim() &&
-      this.empleado.nacionalidadEmpleado?.trim() &&
-      this.empleado.cargoEmpleado?.trim()
+      emp.nombresEmpleado?.trim() &&
+      emp.apellidosEmpleado?.trim() &&
+      emp.rutEmpleado?.trim() &&
+      emp.emailEmpleado?.trim() &&
+      emp.telefonoEmpleado?.trim() &&
+      emp.nacionalidadEmpleado?.trim() &&
+      emp.cargoEmpleado?.trim()
     );
     if (isValid) {
-      this.onSave.emit(this.empleado);
+      this.onSave.emit(emp);
       this.hideDialog();
     }
   }

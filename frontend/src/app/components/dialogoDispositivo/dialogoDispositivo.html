@@ -1,7 +1,7 @@
 <p-dialog
   [(visible)]="visible"
   [style]="{ width: '450px' }"
-  [header]="dispositivo.idDispositivo ? 'Modificar Dispositivo' : 'Agregar Dispositivo'"
+  [header]="dispositivo().idDispositivo ? 'Modificar Dispositivo' : 'Agregar Dispositivo'"
   [modal]="true"
   (onHide)="hideDialog()"
 >
@@ -13,12 +13,12 @@
           type="text"
           pInputText
           id="numeroSerie"
-          [(ngModel)]="dispositivo.numeroSerie"
+          [(ngModel)]="dispositivo().numeroSerie"
           required
           autofocus
           fluid
         />
-        @if (submitted && !dispositivo.numeroSerie) {
+        @if (submitted() && !dispositivo().numeroSerie) {
           <small class="text-red-500">Obligatorio.</small>
         }
       </div>
@@ -28,11 +28,11 @@
           type="text"
           pInputText
           id="marcaDisp"
-          [(ngModel)]="dispositivo.marcaDisp"
+          [(ngModel)]="dispositivo().marcaDisp"
           required
           fluid
         />
-        @if (submitted && !dispositivo.marcaDisp) {
+        @if (submitted() && !dispositivo().marcaDisp) {
           <small class="text-red-500">Obligatorio.</small>
         }
       </div>
@@ -42,11 +42,11 @@
           type="text"
           pInputText
           id="modeloDisp"
-          [(ngModel)]="dispositivo.modeloDisp"
+          [(ngModel)]="dispositivo().modeloDisp"
           required
           fluid
         />
-        @if (submitted && !dispositivo.modeloDisp) {
+        @if (submitted() && !dispositivo().modeloDisp) {
           <small class="text-red-500">Obligatorio.</small>
         }
       </div>
@@ -56,32 +56,32 @@
           type="text"
           pInputText
           id="tamanoPantalla"
-          [(ngModel)]="dispositivo.tamanoPantalla"
+          [(ngModel)]="dispositivo().tamanoPantalla"
           required
           fluid
         />
-        @if (submitted && !dispositivo.tamanoPantalla) {
+        @if (submitted() && !dispositivo().tamanoPantalla) {
           <small class="text-red-500">Obligatorio.</small>
         }
       </div>
       <div>
         <label for="fechaCompra" class="block font-bold mb-3">Fecha de Compra</label>
         <p-datepicker
-          [(ngModel)]="dispositivo.fechaCompra"
+          [(ngModel)]="dispositivo().fechaCompra"
           [iconDisplay]="'input'"
           [showIcon]="true"
           inputId="fechaCompra"
           appendTo="body"
           dateFormat="dd/mm/yy"
         />
-        @if (submitted && !dispositivo.fechaCompra) {
+        @if (submitted() && !dispositivo().fechaCompra) {
           <small class="text-red-500">Obligatorio.</small>
         }
       </div>
       <div>
         <label for="tipoDispositivo" class="block font-bold mb-3">Tipo de Dispositivo</label>
         <p-select
-          [(ngModel)]="dispositivo.tipo"
+          [(ngModel)]="dispositivo().tipo"
           inputId="tipoDispositivo"
           [options]="tiposDeDispositivo"
           optionLabel="label"
@@ -92,18 +92,18 @@
         />
       </div>
 
-      @if (dispositivo.tipo === 'computador') {
+      @if (dispositivo().tipo === 'computador') {
         <div>
           <label for="procesadorComp" class="block font-bold mb-3">Procesador</label>
           <input
             type="text"
             pInputText
             id="procesadorComp"
-            [(ngModel)]="dispositivo.procesadorComp"
+            [(ngModel)]="dispositivo().procesadorComp"
             required
             fluid
           />
-          @if (submitted && !dispositivo.procesadorComp) {
+          @if (submitted() && !dispositivo().procesadorComp) {
             <small class="text-red-500">Obligatorio.</small>
           }
         </div>
@@ -113,11 +113,11 @@
             type="text"
             pInputText
             id="memoriaComp"
-            [(ngModel)]="dispositivo.memoriaComp"
+            [(ngModel)]="dispositivo().memoriaComp"
             required
             fluid
           />
-          @if (submitted && !dispositivo.memoriaComp) {
+          @if (submitted() && !dispositivo().memoriaComp) {
             <small class="text-red-500">Obligatorio.</small>
           }
         </div>
@@ -127,26 +127,26 @@
             type="text"
             pInputText
             id="almacenamientoComp"
-            [(ngModel)]="dispositivo.almacenamientoComp"
+            [(ngModel)]="dispositivo().almacenamientoComp"
             required
             fluid
           />
-          @if (submitted && !dispositivo.almacenamientoComp) {
+          @if (submitted() && !dispositivo().almacenamientoComp) {
             <small class="text-red-500">Obligatorio.</small>
           }
         </div>
-      } @else if (dispositivo.tipo === 'telefono') {
+      } @else if (dispositivo().tipo === 'telefono') {
         <div>
           <label for="numeroTelefono" class="block font-bold mb-3">Número de Teléfono</label>
           <input
             type="text"
             pInputText
             id="numeroTelefono"
-            [(ngModel)]="dispositivo.numeroTelefono"
+            [(ngModel)]="dispositivo().numeroTelefono"
             required
             fluid
           />
-          @if (submitted && !dispositivo.numeroTelefono) {
+          @if (submitted() && !dispositivo().numeroTelefono) {
             <small class="text-red-500">Obligatorio.</small>
           }
         </div>
@@ -156,11 +156,11 @@
             type="text"
             pInputText
             id="companiaTelefono"
-            [(ngModel)]="dispositivo.companiaTelefono"
+            [(ngModel)]="dispositivo().companiaTelefono"
             required
             fluid
           />
-          @if (submitted && !dispositivo.companiaTelefono) {
+          @if (submitted() && !dispositivo().companiaTelefono) {
             <small class="text-red-500">Obligatorio.</small>
           }
         </div>
@@ -169,7 +169,7 @@
       <div>
         <label for="estadoDisp" class="block font-bold mb-3">Estado de Dispositivo</label>
         <p-select
-          [(ngModel)]="dispositivo.estadoDisp"
+          [(ngModel)]="dispositivo().estadoDisp"
           inputId="estadoDisp"
           [options]="statuses"
           optionLabel="label"

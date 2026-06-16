@@ -5,16 +5,20 @@
   <main class="layout-main">
     <div class="layout-content">
       <app-toolbar 
-        [tipoVistaActual]="tipoVistaActual" 
-        (datosActualizados)="obtenerDatos($event)">
+        #toolbar
+        [tipoVistaActual]="tipoVistaActual()" 
+        (datosActualizados)="obtenerDatos()">
       </app-toolbar>
       <app-table-demo
-        [loading]="loading"
-        [datos]="datos"
-        [columnas]="columnas"
-        [camposFiltroGlobal]="camposFiltroGlobal"
-        [empleados]="empleados"
-        (datosActualizados)="obtenerDatos($event)"
+        [loading]="loading()"
+        [datos]="datos()"
+        [columnas]="columnas()"
+        [camposFiltroGlobal]="camposFiltroGlobal()"
+        [empleados]="empleados()"
+        (datosActualizados)="obtenerDatos()"
+        (onEliminar)="manejarEliminar($event)"
+        (onReactivar)="manejarReactivar($event)"
+        (onEdit)="toolbar.editarEntidad($event)"
       ></app-table-demo>
     </div>
   </main>

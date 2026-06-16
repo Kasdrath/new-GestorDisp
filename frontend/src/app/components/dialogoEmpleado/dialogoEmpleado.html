@@ -1,7 +1,7 @@
 <p-dialog
   [(visible)]="visible"
   [style]="{ width: '450px' }"
-  [header]="empleado.idEmpleado ? 'Modificar Empleado' : 'Agregar Empleado'"
+  [header]="empleado().idEmpleado ? 'Modificar Empleado' : 'Agregar Empleado'"
   [modal]="true"
   (onHide)="hideDialog()"
 >
@@ -13,12 +13,12 @@
           type="text"
           pInputText
           id="nombresEmpleado"
-          [(ngModel)]="empleado.nombresEmpleado"
+          [(ngModel)]="empleado().nombresEmpleado"
           required
           autofocus
           fluid
         />
-        @if (submitted && !empleado.nombresEmpleado) {
+        @if (submitted() && !empleado().nombresEmpleado) {
           <small class="text-red-500">Obligatorio.</small>
         }
       </div>
@@ -28,11 +28,11 @@
           type="text"
           pInputText
           id="apellidosEmpleado"
-          [(ngModel)]="empleado.apellidosEmpleado"
+          [(ngModel)]="empleado().apellidosEmpleado"
           required
           fluid
         />
-        @if (submitted && !empleado.apellidosEmpleado) {
+        @if (submitted() && !empleado().apellidosEmpleado) {
           <small class="text-red-500">Obligatorio.</small>
         }
       </div>
@@ -42,11 +42,11 @@
           type="text"
           pInputText
           id="rutEmpleado"
-          [(ngModel)]="empleado.rutEmpleado"
+          [(ngModel)]="empleado().rutEmpleado"
           required
           fluid
         />
-        @if (submitted && !empleado.rutEmpleado) {
+        @if (submitted() && !empleado().rutEmpleado) {
           <small class="text-red-500">Obligatorio.</small>
         }
       </div>
@@ -56,11 +56,11 @@
           type="text"
           pInputText
           id="emailEmpleado"
-          [(ngModel)]="empleado.emailEmpleado"
+          [(ngModel)]="empleado().emailEmpleado"
           required
           fluid
         />
-        @if (submitted && !empleado.emailEmpleado) {
+        @if (submitted() && !empleado().emailEmpleado) {
           <small class="text-red-500">Obligatorio.</small>
         }
       </div>
@@ -70,11 +70,11 @@
           type="text"
           pInputText
           id="telefonoEmpleado"
-          [(ngModel)]="empleado.telefonoEmpleado"
+          [(ngModel)]="empleado().telefonoEmpleado"
           required
           fluid
         />
-        @if (submitted && !empleado.telefonoEmpleado) {
+        @if (submitted() && !empleado().telefonoEmpleado) {
           <small class="text-red-500">Obligatorio.</small>
         }
       </div>
@@ -84,11 +84,11 @@
           type="text"
           pInputText
           id="nacionalidadEmpleado"
-          [(ngModel)]="empleado.nacionalidadEmpleado"
+          [(ngModel)]="empleado().nacionalidadEmpleado"
           required
           fluid
         />
-        @if (submitted && !empleado.nacionalidadEmpleado) {
+        @if (submitted() && !empleado().nacionalidadEmpleado) {
           <small class="text-red-500">Obligatorio.</small>
         }
       </div>
@@ -98,11 +98,11 @@
           type="text"
           pInputText
           id="cargoEmpleado"
-          [(ngModel)]="empleado.cargoEmpleado"
+          [(ngModel)]="empleado().cargoEmpleado"
           required
           fluid
         />
-        @if (submitted && !empleado.cargoEmpleado) {
+        @if (submitted() && !empleado().cargoEmpleado) {
           <small class="text-red-500">Obligatorio.</small>
         }
       </div>

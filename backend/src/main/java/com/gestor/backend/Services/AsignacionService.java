@@ -4,7 +4,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gestor.backend.Repository.AsignacionRepository;
@@ -17,14 +16,15 @@ import com.gestor.backend.model.Empleado;
 @Service
 public class AsignacionService {
 
-    @Autowired
-    private AsignacionRepository asignacionRepo;
+    private final AsignacionRepository asignacionRepo;
+    private final EmpleadoRepository empleadoRepo;
+    private final DispositivoRepository dispositivoRepo;
 
-    @Autowired
-    private EmpleadoRepository empleadoRepo;
-
-    @Autowired
-    private DispositivoRepository dispositivoRepo;
+    public AsignacionService(AsignacionRepository asignacionRepo, EmpleadoRepository empleadoRepo, DispositivoRepository dispositivoRepo) {
+        this.asignacionRepo = asignacionRepo;
+        this.empleadoRepo = empleadoRepo;
+        this.dispositivoRepo = dispositivoRepo;
+    }
 
     public Asignacion vincularDispositivo(Long idEmpleado, Long idDispositivo) {
         Empleado empleado = empleadoRepo.findById(idEmpleado).orElseThrow(() -> new RuntimeException("Empleado no encontrado con ID: " + idEmpleado));

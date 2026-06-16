@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -21,17 +20,18 @@ import com.gestor.backend.model.TipoDisp;
 @Component
 public class DataSeeder implements CommandLineRunner {
 
-    @Autowired
-    private EmpleadoRepository empleadoRepo;
+    private final EmpleadoRepository empleadoRepo;
+    private final DispositivoRepository dispositivoRepo;
+    private final AsignacionRepository asignacionRepo;
+    private final TipoDispRepository tipoDispRepo;
 
-    @Autowired
-    private DispositivoRepository dispositivoRepo;
-
-    @Autowired
-    private AsignacionRepository asignacionRepo;
-
-    @Autowired
-    private TipoDispRepository tipoDispRepo;
+    public DataSeeder(EmpleadoRepository empleadoRepo, DispositivoRepository dispositivoRepo,
+                      AsignacionRepository asignacionRepo, TipoDispRepository tipoDispRepo) {
+        this.empleadoRepo = empleadoRepo;
+        this.dispositivoRepo = dispositivoRepo;
+        this.asignacionRepo = asignacionRepo;
+        this.tipoDispRepo = tipoDispRepo;
+    }
 
     @Override
     public void run(String... args) throws Exception {

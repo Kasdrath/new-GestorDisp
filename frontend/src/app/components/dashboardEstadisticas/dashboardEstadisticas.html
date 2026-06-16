@@ -1,0 +1,25 @@
+<div class="p-4">
+  <h2 class="text-2xl font-bold mb-6 text-color-secondary"><i class="pi pi-chart-bar mr-2 text-2xl"></i> Resumen de Inventario</h2>
+  <div class="flex flex-wrap gap-4">
+    <div class="flex-1 min-w-[200px] p-4 rounded shadow-2" style="background-color: #eff6ff; border: 1px solid #bfdbfe;">
+      <div class="font-semibold mb-2" style="color: #2563eb;"><i class="pi pi-desktop mr-2"></i>Total Equipos</div>
+      <div class="text-4xl font-bold" style="color: #1e3a8a;">{{ estadisticas()?.total || 0 }}</div>
+    </div>
+    <div class="flex-1 min-w-[200px] p-4 rounded shadow-2" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
+      <div class="font-semibold mb-2" style="color: #16a34a;"><i class="pi pi-check-circle mr-2"></i>Disponibles</div>
+      <div class="text-4xl font-bold" style="color: #14532d;">{{ estadisticas()?.disponibles || 0 }}</div>
+    </div>
+    <div class="flex-1 min-w-[200px] p-4 rounded shadow-2" style="background-color: #fff7ed; border: 1px solid #fed7aa;">
+      <div class="font-semibold mb-2" style="color: #ea580c;"><i class="pi pi-user mr-2"></i>En Uso (Asignados)</div>
+      <div class="text-4xl font-bold" style="color: #7c2d12;">{{ estadisticas()?.enUso || 0 }}</div>
+    </div>
+    <div class="flex-1 min-w-[200px] p-4 rounded shadow-2" style="background-color: #fef2f2; border: 1px solid #fecaca;">
+      <div class="font-semibold mb-2" style="color: #dc2626;"><i class="pi pi-trash mr-2"></i>Dados de Baja</div>
+      <div class="text-4xl font-bold" style="color: #7f1d1d;">{{ estadisticas()?.inactivos || 0 }}</div>
+    </div>
+    <div class="flex-1 min-w-[200px] p-4 rounded shadow-2" style="background-color: #faf5ff; border: 1px solid #e9d5ff;">
+      <div class="font-semibold mb-2" style="color: #9333ea;"><i class="pi pi-users mr-2"></i>Empleados Activos</div>
+      <div class="text-4xl font-bold" style="color: #581c87;">{{ estadisticas()?.empleadosActivos || 0 }}</div>
+    </div>
+  </div>
+</div>

@@ -1,7 +1,6 @@
 <p-dialog
   header="Nueva Asignación"
   [(visible)]="visible"
-  (visibleChange)="visibleChange.emit($event)"
   [modal]="true"
   [style]="{ width: '400px' }"
   appendTo="body"
@@ -12,7 +11,7 @@
       <label for="empleado" class="font-semibold">Empleado</label>
       <p-select
         id="empleado"
-        [options]="empleados"
+        [options]="empleados()"
         [(ngModel)]="asignacion.idEmpleado"
         optionLabel="nombreCompleto"
         optionValue="idEmpleado"
@@ -30,7 +29,7 @@
       <label for="dispositivo" class="font-semibold">Dispositivo</label>
       <p-select
         id="dispositivo"
-        [options]="dispositivosDisponibles"
+        [options]="dispositivosDisponibles()"
         [(ngModel)]="asignacion.idDispositivo"
         optionLabel="etiquetaDropdown"
         optionValue="idDispositivo"

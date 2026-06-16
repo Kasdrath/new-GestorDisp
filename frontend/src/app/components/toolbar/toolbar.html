@@ -3,7 +3,6 @@
   <ng-template #start>
     <p-button type="button" pRipple label="Agregar" severity="success" (onClick)="abrirDialogo()" />
 
-    <p-button type="button" pRipple label="Borrar" icon="pi pi-trash" outlined />
   </ng-template>
   <ng-template #end>
     <!--
@@ -25,20 +24,17 @@
 </p-toolbar>
 
   <app-dialogo-dispositivo
-    [visible]="visible"
-    [dispositivo]="dataSelected"
-    (visibleChange)="visibleChange($event)"
+    [(visible)]="visible"
+    [dispositivo]="dataSelected()"
     (onSave)="guardarDispositivo($event)"
   ></app-dialogo-dispositivo>
   <app-dialogo-empleado
-    [visible]="visibleEmpleado"
-    [empleado]="dataSelected"
-    (visibleChange)="visibleEmpleadoChange($event)"
+    [(visible)]="visibleEmpleado"
+    [empleado]="dataSelected()"
     (onSave)="guardarEmpleado($event)"
   ></app-dialogo-empleado>
   <app-dialogo-asignacion
-    [visible]="visibleAsignacion"
-    (visibleChange)="visibleAsignacionChange($event)"
+    [(visible)]="visibleAsignacion"
     (onSave)="guardarAsignacion($event)"
   ></app-dialogo-asignacion>
 
