@@ -1,7 +1,18 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.compile.nullAnalysis.mode": "automatic",
-    "sqltools.connections": [],
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5433,
+            "driver": "PostgreSQL",
+            "database": "gestordb",
+            "username": "gestor_user",
+            "name": "dbb"
+        }
+    ],
     "angular-schematics.schematicsDefaultOptions": {
         "angular-*": {
             "externalTemplate": true

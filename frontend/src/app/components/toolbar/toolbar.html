@@ -5,32 +5,40 @@
 
   </ng-template>
   <ng-template #end>
-    <!--
-    <p-fileUpload
-      mode="basic"
-      accept="image/*"
-      [maxFileSize]="1000000"
-      label="Importar"
-      chooseLabel="Import"
-      auto
-      customUpload
-      class="mr-2 inline-block"
-      [chooseButtonProps]="{ severity: 'secondary' }"
-    />
-  
-    <p-button label="Exportar" icon="pi pi-upload" severity="secondary" />
-    -->
+    @if (esVistaImportable()) {
+      <p-button
+        label="Descargar Plantilla"
+        icon="pi pi-download"
+        severity="info"
+        [outlined]="true"
+        (onClick)="descargarPlantilla()"
+        class="mr-2 inline-block"
+      />
+      <p-fileUpload
+        mode="basic"
+        accept=".xlsx, .xls"
+        [maxFileSize]="10000000"
+        [chooseLabel]="isUploading() ? 'Importando...' : 'Importar Excel'"
+        [chooseIcon]="isUploading() ? 'pi pi-spin pi-spinner' : 'pi pi-file-excel'"
+        [disabled]="isUploading()"
+        [auto]="true"
+        [customUpload]="true"
+        (uploadHandler)="onUpload($event)"
+        class="mr-2 inline-block"
+        [chooseButtonProps]="{ severity: 'secondary', outlined: true }"
+      />
+    }
   </ng-template>
 </p-toolbar>
 
   <app-dialogo-dispositivo
     [(visible)]="visible"
-    [dispositivo]="dataSelected()"
+    [dispositivo]="dataSelectedDispositivo()"
     (onSave)="guardarDispositivo($event)"
   ></app-dialogo-dispositivo>
   <app-dialogo-empleado
     [(visible)]="visibleEmpleado"
-    [empleado]="dataSelected()"
+    [empleado]="dataSelectedEmpleado()"
     (onSave)="guardarEmpleado($event)"
   ></app-dialogo-empleado>
   <app-dialogo-asignacion

@@ -2,10 +2,19 @@ package com.gestor.backend.Services;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.gestor.backend.Repository.AsignacionRepository;
 import com.gestor.backend.Repository.EmpleadoRepository;
@@ -88,5 +97,41 @@ public class EmpleadoService {
         // Borrado lógico: marcamos al empleado como inactivo (dado de baja)
         empleado.setEstadoEmpleado(false);
         empleadoRepo.save(empleado);
+    }
+
+    @Transactional
+    public List<Empleado> importarDesdeExcel(MultipartFile file) {
+        List<Empleado> empleadosGuardados = new ArrayList<>();
+        DataFormatter formatter = new DataFormatter(); // Convierte cualquier celda a String de forma segura
+        
+        try (InputStream is = file.getInputStream(); Workbook workbook = new XSSFWorkbook(is)) {
+            Sheet sheet = workbook.getSheetAt(0); // Leer la primera hoja del Excel
+            
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue; // Saltar la fila 0 (Cabeceras)
+                
+                // Se asume el orden: 0=RUT, 1=Nombres, 2=Apellidos, 3=Email, 4=Tel, 5=Nacionalidad, 6=Cargo
+                String rut = formatter.formatCellValue(row.getCell(0)).trim();
+                if (rut.isEmpty()) continue; // Saltar filas vacías
+
+                // Evitar insertar empleados duplicados en base al RUT
+                if (empleadoRepo.findByRutEmpleado(rut).isPresent()) continue; 
+
+                Empleado emp = new Empleado();
+                emp.setRutEmpleado(rut);
+                emp.setNombresEmpleado(formatter.formatCellValue(row.getCell(1)));
+                emp.setApellidosEmpleado(formatter.formatCellValue(row.getCell(2)));
+                emp.setEmailEmpleado(formatter.formatCellValue(row.getCell(3)));
+                emp.setTelefonoEmpleado(formatter.formatCellValue(row.getCell(4)));
+                emp.setNacionalidadEmpleado(formatter.formatCellValue(row.getCell(5)));
+                emp.setCargoEmpleado(formatter.formatCellValue(row.getCell(6)));
+                emp.setEstadoEmpleado(true);
+
+                empleadosGuardados.add(empleadoRepo.save(emp));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error al procesar el archivo Excel: " + e.getMessage());
+        }
+        return empleadosGuardados;
     }
 }

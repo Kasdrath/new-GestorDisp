@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.gestor.backend.Repository.DispositivoRepository;
 import com.gestor.backend.Services.DispositivoService;
@@ -30,6 +32,7 @@ public class DispositivoController {
         this.dispositivoService = dispositivoService;
         this.dispositivoRepo = dispositivoRepo;
     }
+
     @GetMapping
     public List<Dispositivo> obtenerTodosDispositivos() {
         return dispositivoRepo.findAll();
@@ -49,6 +52,19 @@ public class DispositivoController {
             return new ResponseEntity<>(nuevoDispositivo, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<?> importarDispositivosExcel(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("El archivo Excel está vacío.");
+        }
+        try {
+            List<Dispositivo> guardados = dispositivoService.importarDesdeExcel(file);
+            return ResponseEntity.ok("Se han importado " + guardados.size() + " dispositivos exitosamente.");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 

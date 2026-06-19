@@ -39,7 +39,6 @@ export class Inicio implements OnInit {
     { field: 'estadoDisp', header: 'Estado', type: 'boolean' },
   ];
 
-  // Derivamos las columnas de forma reactiva
   columnas = computed<Columna[]>(() => {
     const vista = this.tipoVistaActual();
     switch (vista) {
@@ -84,7 +83,6 @@ export class Inicio implements OnInit {
     }
   });
 
-  // Derivamos los datos de forma reactiva sin necesidad de reasignar
   datos = computed<Entidad[]>(() => {
     const vista = this.tipoVistaActual();
     switch (vista) {
@@ -104,7 +102,6 @@ export class Inicio implements OnInit {
   obtenerDatos(entidad?: string) {
     this.loading.set(true);
 
-    // Si no se envía entidad, o es explícitamente 'dispositivos', se recargan
     if (!entidad || entidad === 'dispositivos') {
       this.dispositivoService.obtenerTodos().subscribe({
         next: (data: Dispositivo[]) => {
@@ -120,7 +117,6 @@ export class Inicio implements OnInit {
         }
       });
     }
-    // Si no se envía entidad, o es explícitamente 'empleados', se recargan
     if (!entidad || entidad === 'empleados') {
       this.empleadoService.obtenerTodos().subscribe({
         next: (data: Empleado[]) => {
@@ -158,7 +154,6 @@ export class Inicio implements OnInit {
     if (!fecha) return null;
     if (fecha instanceof Date) return fecha.toISOString();
     if (typeof fecha !== 'string') return String(fecha);
-    // Transforma "DD-MM-YYYY HH:mm:ss" a "YYYY-MM-DDTHH:mm:ss"
     const partes = fecha.split(' ');
     if (partes.length === 2 && partes[0].includes('-')) {
       const [dia, mes, anio] = partes[0].split('-');
@@ -170,8 +165,7 @@ export class Inicio implements OnInit {
   }
 
   cargarTablaDispositivos(deviceType: string) {
-    // Al cambiar este signal, los `computed` que dependen de él (`datos` y `columnas`)
-    // se recalcularán automáticamente, actualizando la vista.
+
     this.tipoVistaActual.set(deviceType);
   }
 

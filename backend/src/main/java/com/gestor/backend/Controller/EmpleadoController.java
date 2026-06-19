@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.gestor.backend.Repository.EmpleadoRepository;
 import com.gestor.backend.Services.EmpleadoService;
@@ -51,6 +53,18 @@ public class EmpleadoController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @PostMapping("/upload")
+public ResponseEntity<?> importarEmpleadosExcel(@RequestParam("file") MultipartFile file) {
+    if (file.isEmpty()) {
+        return ResponseEntity.badRequest().body("El archivo Excel está vacío.");
+    }
+    try {
+        List<Empleado> guardados = empleadoService.importarDesdeExcel(file);
+        return ResponseEntity.ok("Se han importado " + guardados.size() + " empleados exitosamente.");
+    } catch (Exception e) {
+        return ResponseEntity.internalServerError().body(e.getMessage());
+    }
+}
 
     @PutMapping("/{id}")
     public ResponseEntity<?> modificarEmpleado(@PathVariable Long id, @RequestBody Empleado empleadoEditado) {
