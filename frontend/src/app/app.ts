@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Header } from './components/header/header';
 import { PrimeNG } from 'primeng/config';
@@ -11,7 +11,7 @@ import { PrimeNG } from 'primeng/config';
   styleUrl: './app.css',
 })
 export class App implements OnInit {
-  constructor(private primeng: PrimeNG) {}
+  private primeng = inject(PrimeNG);
 
   ngOnInit() {
     this.primeng.setTranslation({

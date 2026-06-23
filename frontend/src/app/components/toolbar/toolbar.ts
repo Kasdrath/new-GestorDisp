@@ -7,8 +7,8 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { MessageService } from 'primeng/api';
 import { DialogoDispositivo } from '../dialogoDispositivo/dialogoDispositivo';
 import { DialogoEmpleado } from '../dialogoEmpleado/dialogoEmpleado';
-import { dispositivoService } from '../../services/dispositivo.service';
-import { empleadoService } from '../../services/empleado.service';
+import { DispositivoService } from '../../services/dispositivo.service';
+import { EmpleadoService } from '../../services/empleado.service';
 import { AsignacionesService } from '../../services/asignaciones.service';
 import { DialogoAsignacion } from '../dialogoAsignacion/dialogoAsignacion';
 import { Entidad, Dispositivo, Empleado } from '../tabla/tabla';
@@ -51,8 +51,8 @@ export class Toolbar {
 
   // Regla: Usar inject() en lugar de inyección por constructor
   private messageService = inject(MessageService);
-  private dispositivoService = inject(dispositivoService);
-  private empleadoService = inject(empleadoService);
+  private dispositivoService = inject(DispositivoService);
+  private empleadoService = inject(EmpleadoService);
   private asignacionService = inject(AsignacionesService);
   private http = inject(HttpClient);
 

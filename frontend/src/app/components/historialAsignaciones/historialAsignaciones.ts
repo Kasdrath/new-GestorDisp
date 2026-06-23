@@ -86,30 +86,40 @@ export class HistorialAsignaciones {
     if (hist.length === 0) return;
 
     const separador = ';';
-    let csv = this.esDispositivo() ? 'Empleado Asignado' : 'Dispositivo';
-    csv += `${separador}Fecha Asignación${separador}Fecha Devolución${separador}Estado\n`;
+    const escapeCSV = (texto: string) => `"${texto.replace(/"/g, '""')}"`;
+    const formatFecha = (fechaStr: string | null) => {
+      if (!fechaStr) return '-';
+      const fecha = new Date(fechaStr);
+      return `${fecha.getDate().toString().padStart(2, '0')}/${(fecha.getMonth() + 1).toString().padStart(2, '0')}/${fecha.getFullYear()} ${fecha.getHours().toString().padStart(2, '0')}:${fecha.getMinutes().toString().padStart(2, '0')}`;
+    };
 
-    hist.forEach(h => {
-      let columna1 = '';
-      if (this.esDispositivo()) {
-        columna1 = `${h.empleado?.nombresEmpleado ?? ''} ${h.empleado?.apellidosEmpleado ?? ''}`;
-      } else {
-        columna1 = `${h.dispositivo?.marcaDisp ?? ''} ${h.dispositivo?.modeloDisp ?? ''} (N/S: ${h.dispositivo?.numeroSerie ?? ''})`;
-      }
-      
-      const formatFecha = (fechaStr: string | null) => {
-        if (!fechaStr) return '-';
-        const fecha = new Date(fechaStr);
-        return `${fecha.getDate().toString().padStart(2, '0')}/${(fecha.getMonth() + 1).toString().padStart(2, '0')}/${fecha.getFullYear()} ${fecha.getHours().toString().padStart(2, '0')}:${fecha.getMinutes().toString().padStart(2, '0')}`;
-      };
+    let csv = '';
+    if (this.esDispositivo()) {
+      csv += `Empleado Asignado${separador}RUT Empleado${separador}Cargo Empleado${separador}Fecha Asignación${separador}Fecha Devolución${separador}Estado\n`;
+      hist.forEach(h => {
+        const empNombre = `${h.empleado?.nombresEmpleado ?? ''} ${h.empleado?.apellidosEmpleado ?? ''}`;
+        const empRut = h.empleado?.rutEmpleado ?? '';
+        const empCargo = h.empleado?.cargoEmpleado ?? '';
+        const fechaAsig = formatFecha(h.fechaAsignacion);
+        const fechaDev = formatFecha(h.fechaDesvinculacion);
+        const estado = h.fechaDesvinculacion ? 'Devuelto' : 'Activo';
 
-      const fechaAsig = formatFecha(h.fechaAsignacion);
-      const fechaDev = formatFecha(h.fechaDesvinculacion);
-      const estado = h.fechaDesvinculacion ? 'Devuelto' : 'Activo';
+        csv += `${escapeCSV(empNombre)}${separador}${escapeCSV(empRut)}${separador}${escapeCSV(empCargo)}${separador}${escapeCSV(fechaAsig)}${separador}${escapeCSV(fechaDev)}${separador}${escapeCSV(estado)}\n`;
+      });
+    } else {
+      csv += `Empleado${separador}RUT${separador}Cargo${separador}Dispositivo${separador}Fecha Asignación${separador}Fecha Devolución${separador}Estado\n`;
+      hist.forEach(h => {
+        const empNombre = `${h.empleado?.nombresEmpleado ?? ''} ${h.empleado?.apellidosEmpleado ?? ''}`;
+        const empRut = h.empleado?.rutEmpleado ?? '';
+        const empCargo = h.empleado?.cargoEmpleado ?? '';
+        const dispInfo = `${h.dispositivo?.marcaDisp ?? ''} ${h.dispositivo?.modeloDisp ?? ''} (N/S: ${h.dispositivo?.numeroSerie ?? ''})`;
+        const fechaAsig = formatFecha(h.fechaAsignacion);
+        const fechaDev = formatFecha(h.fechaDesvinculacion);
+        const estado = h.fechaDesvinculacion ? 'Devuelto' : 'Activo';
 
-      const escapeCSV = (texto: string) => `"${texto.replace(/"/g, '""')}"`;
-      csv += `${escapeCSV(columna1)}${separador}${escapeCSV(fechaAsig)}${separador}${escapeCSV(fechaDev)}${separador}${escapeCSV(estado)}\n`;
-    });
+        csv += `${escapeCSV(empNombre)}${separador}${escapeCSV(empRut)}${separador}${escapeCSV(empCargo)}${separador}${escapeCSV(dispInfo)}${separador}${escapeCSV(fechaAsig)}${separador}${escapeCSV(fechaDev)}${separador}${escapeCSV(estado)}\n`;
+      });
+    }
 
     const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');

@@ -5,14 +5,14 @@
   [style]="{ width: '400px' }"
   appendTo="body"
 >
-  <div class="flex flex-col gap-4 mt-4">
+  <div class="flex flex-col gap-4 mt-4" [formGroup]="form">
     <!-- Selector de Empleado -->
     <div class="flex flex-col gap-2">
       <label for="empleado" class="font-semibold">Empleado</label>
       <p-select
         id="empleado"
         [options]="empleados()"
-        [(ngModel)]="asignacion.idEmpleado"
+        formControlName="idEmpleado"
         optionLabel="nombreCompleto"
         optionValue="idEmpleado"
         placeholder="Selecciona un empleado"
@@ -30,7 +30,7 @@
       <p-select
         id="dispositivo"
         [options]="dispositivosDisponibles()"
-        [(ngModel)]="asignacion.idDispositivo"
+        formControlName="idDispositivo"
         optionLabel="etiquetaDropdown"
         optionValue="idDispositivo"
         placeholder="Selecciona un dispositivo"
@@ -45,6 +45,6 @@
 
   <ng-template pTemplate="footer">
     <p-button label="Cancelar" icon="pi pi-times" [text]="true" severity="secondary" (onClick)="cerrar()" />
-    <p-button label="Vincular" icon="pi pi-link" (onClick)="guardar()" [disabled]="!asignacion.idEmpleado || !asignacion.idDispositivo" />
+    <p-button label="Vincular" icon="pi pi-link" (onClick)="guardar()" [disabled]="form.invalid" />
   </ng-template>
 </p-dialog>

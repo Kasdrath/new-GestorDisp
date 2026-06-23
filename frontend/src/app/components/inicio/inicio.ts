@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, signal, computed } 
 import { CommonModule } from '@angular/common';
 import { PanelmenuBasicDemo } from '../menupanel/menupanel';
 import { TableBasicDemo, Columna, Entidad, Dispositivo, Empleado, Asignacion } from '../tabla/tabla';
-import { dispositivoService } from '../../services/dispositivo.service';
-import { empleadoService } from '../../services/empleado.service';
+import { DispositivoService } from '../../services/dispositivo.service';
+import { EmpleadoService } from '../../services/empleado.service';
 import { AsignacionesService } from '../../services/asignaciones.service';
 import { Toolbar } from '../toolbar/toolbar';
 import { MessageService } from 'primeng/api';
@@ -17,8 +17,8 @@ import { MessageService } from 'primeng/api';
   providers: [MessageService]
 })
 export class Inicio implements OnInit {
-  private dispositivoService = inject(dispositivoService);
-  private empleadoService = inject(empleadoService);
+  private dispositivoService = inject(DispositivoService);
+  private empleadoService = inject(EmpleadoService);
   private asignacionService = inject(AsignacionesService);
   private messageService = inject(MessageService);
 

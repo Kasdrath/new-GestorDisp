@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, effect, inject, model, output, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
-import { empleadoService } from '../../services/empleado.service';
-import { dispositivoService } from '../../services/dispositivo.service';
+import { EmpleadoService } from '../../services/empleado.service';
+import { DispositivoService } from '../../services/dispositivo.service';
+import { Empleado } from '../../models/empleado';
+import { Dispositivo } from '../../models/dispositivo';
 
 // Interfaces para tipado estricto
 export interface EmpleadoOpcion {
@@ -30,21 +32,25 @@ export interface DispositivoOpcion {
 
 @Component({
   selector: 'app-dialogo-asignacion',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, DialogModule, ButtonModule, SelectModule],
+  imports: [CommonModule, ReactiveFormsModule, DialogModule, ButtonModule, SelectModule],
   templateUrl: './dialogoAsignacion.html'
 })
 export class DialogoAsignacion {
-  private empleadoService = inject(empleadoService);
-  private dispositivoService = inject(dispositivoService);
+  private empleadoService = inject(EmpleadoService);
+  private dispositivoService = inject(DispositivoService);
+  private fb = inject(FormBuilder);
 
   visible = model(false);
-  onSave = output<any>();
+  onSave = output<{ idEmpleado?: number; idDispositivo?: number }>();
 
   empleados = signal<EmpleadoOpcion[]>([]);
   dispositivos = signal<DispositivoOpcion[]>([]);
-  asignacion: any = {}; // Se mantiene como objeto plano para no romper el [(ngModel)]
+
+  form = this.fb.group({
+    idEmpleado: [null as number | null, Validators.required],
+    idDispositivo: [null as number | null, Validators.required]
+  });
 
   dispositivosDisponibles = computed(() => {
     return this.dispositivos().filter(d => d.estadoDisp === true && d.enUso === false);
@@ -53,6 +59,7 @@ export class DialogoAsignacion {
   constructor() {
     effect(() => {
       if (this.visible()) {
+        this.form.reset();
         this.cargarDatos();
       }
     });
@@ -60,7 +67,7 @@ export class DialogoAsignacion {
 
   cargarDatos() {
     this.empleadoService.obtenerTodos().subscribe({
-      next: (data: any[]) => {
+      next: (data: Empleado[]) => {
         const empleadosActivos = data.filter(e => e.estadoEmpleado !== false);
         this.empleados.set(empleadosActivos.map(e => ({
           ...e,
@@ -71,10 +78,10 @@ export class DialogoAsignacion {
     });
 
     this.dispositivoService.obtenerTodos().subscribe({
-      next: (data: any[]) => {
+      next: (data: Dispositivo[]) => {
         this.dispositivos.set(data.map(d => ({
           ...d,
-          enUso: d.asignaciones && d.asignaciones.some((a: any) => !a.fechaDesvinculacion),
+          enUso: d.asignaciones && d.asignaciones.some((a) => !a.fechaDesvinculacion),
           etiquetaDropdown: `${d.marcaDisp} ${d.modeloDisp} (N/S: ${d.numeroSerie})`
         })));
       },
@@ -87,8 +94,14 @@ export class DialogoAsignacion {
   }
 
   guardar() {
-    this.onSave.emit({ ...this.asignacion });
-    this.asignacion = {}; // Limpiamos el formulario
-    this.cerrar();
+    if (this.form.valid) {
+      const formValue = this.form.value;
+      this.onSave.emit({
+        idEmpleado: formValue.idEmpleado ?? undefined,
+        idDispositivo: formValue.idDispositivo ?? undefined
+      });
+      this.form.reset();
+      this.cerrar();
+    }
   }
 }

@@ -13,53 +13,19 @@ import { DialogModule } from 'primeng/dialog';
 import { HistorialAsignaciones } from '../historialAsignaciones/historialAsignaciones';
 import { DashboardEstadisticas, EstadisticasData } from '../dashboardEstadisticas/dashboardEstadisticas';
 
+import { Dispositivo } from '../../models/dispositivo';
+import { Empleado } from '../../models/empleado';
+import { Asignacion } from '../../models/asignacion';
+
+export type { Dispositivo, Empleado, Asignacion };
+export type Entidad = Dispositivo | Empleado | Asignacion;
+
 // Interfaces para un tipado estricto (Regla: Evitar 'any')
 export interface Columna {
   field: string;
   header: string;
   type: 'numeric' | 'text' | 'date' | 'boolean';
 }
-
-export interface Dispositivo {
-  idDispositivo: number;
-  numeroSerie: string;
-  marcaDisp: string;
-  modeloDisp: string;
-  fechaCompra: Date | string;
-  estadoDisp: boolean;
-  enUso?: boolean;
-  tipoDispositivo?: { idTipoDisp: number; tipoDispositivo: string };
-  asignaciones?: Asignacion[];
-
-  tamanoPantalla?: string;
-  procesadorComp?: string;
-  memoriaComp?: string;
-  almacenamientoComp?: string;
-  companiaTelefono?: string;
-  numeroTelefono?: string;
-}
-
-export interface Empleado {
-  idEmpleado: number;
-  nombresEmpleado: string;
-  apellidosEmpleado: string;
-  rutEmpleado: string;
-  estadoEmpleado: boolean;
-  emailEmpleado?: string;
-  telefonoEmpleado?: string;
-  nacionalidadEmpleado?: string;
-  cargoEmpleado?: string;
-}
-
-export interface Asignacion {
-  idAsignacion: number;
-  dispositivo?: Partial<Dispositivo>;
-  empleado?: Partial<Empleado>;
-  fechaAsignacion: string | null;
-  fechaDesvinculacion: string | null;
-}
-
-export type Entidad = Dispositivo | Empleado | Asignacion;
 
 @Component({
   selector: 'app-table-demo',

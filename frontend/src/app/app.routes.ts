@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
-import { Inicio } from './components/inicio/inicio';
-import { Prueba } from './components/prueba/prueba';
-
-
-
 
 export const routes: Routes = [
-  { path: '', component: Inicio },
-  { path: 'prueba', component: Prueba }
-
+  {
+    path: '',
+    loadComponent: () => import('./components/inicio/inicio').then(m => m.Inicio),
+  },
+  {
+    path: 'prueba',
+    loadComponent: () => import('./components/prueba/prueba').then(m => m.Prueba),
+  }
 ];
