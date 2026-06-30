@@ -4,6 +4,7 @@
   [modal]="true"
   [style]="{ width: '400px' }"
   appendTo="body"
+  (onShow)="alAbrir()"
 >
   <div class="flex flex-col gap-4 mt-4" [formGroup]="form">
     <!-- Selector de Empleado -->
@@ -14,7 +15,7 @@
         [options]="empleados()"
         formControlName="idEmpleado"
         optionLabel="nombreCompleto"
-        optionValue="idEmpleado"
+        dataKey="idEmpleado"
         placeholder="Selecciona un empleado"
         [filter]="true"
         filterBy="nombreCompleto"
@@ -32,7 +33,7 @@
         [options]="dispositivosDisponibles()"
         formControlName="idDispositivo"
         optionLabel="etiquetaDropdown"
-        optionValue="idDispositivo"
+        dataKey="idDispositivo"
         placeholder="Selecciona un dispositivo"
         [filter]="true"
         filterBy="etiquetaDropdown"

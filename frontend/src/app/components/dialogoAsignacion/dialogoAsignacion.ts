@@ -48,21 +48,17 @@ export class DialogoAsignacion {
   dispositivos = signal<DispositivoOpcion[]>([]);
 
   form = this.fb.group({
-    idEmpleado: [null as number | null, Validators.required],
-    idDispositivo: [null as number | null, Validators.required]
+    idEmpleado: [null as any, Validators.required],
+    idDispositivo: [null as any, Validators.required]
   });
 
   dispositivosDisponibles = computed(() => {
     return this.dispositivos().filter(d => d.estadoDisp === true && d.enUso === false);
   });
 
-  constructor() {
-    effect(() => {
-      if (this.visible()) {
-        this.form.reset();
-        this.cargarDatos();
-      }
-    });
+  alAbrir() {
+    this.form.reset();
+    this.cargarDatos();
   }
 
   cargarDatos() {
@@ -97,8 +93,8 @@ export class DialogoAsignacion {
     if (this.form.valid) {
       const formValue = this.form.value;
       this.onSave.emit({
-        idEmpleado: formValue.idEmpleado ?? undefined,
-        idDispositivo: formValue.idDispositivo ?? undefined
+        idEmpleado: formValue.idEmpleado?.idEmpleado ?? undefined,
+        idDispositivo: formValue.idDispositivo?.idDispositivo ?? undefined
       });
       this.form.reset();
       this.cerrar();
